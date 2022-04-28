@@ -3,14 +3,11 @@
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-$context = Get-azContext
+Clear-AzContext -Force
+Connect-AzAccount
 
-if (!$context)
-{
-    Write-Output "There is no existing session.  Logging into Azure."
-    Clear-AzContext -Force
-    Connect-AzAccount
-}
+# path to the outfile (csv)
+$datapath = "C:\Temp\QuotaUtil"
 
 # retrives region list across the resources, and pull all the subscriptions in the tenant.
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
@@ -81,3 +78,50 @@ foreach($subscription in $subscriptions)
 "@
         }
     }
+ 
+    # Get Storage Quota
+
+    $storageQuota = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
+    $usage = 0
+
+    if ($storageQuota.Limit -gt 0) 
+    { 
+        $usage = $storageQuota.CurrentValue / $storageQuota.Limit 
+    }
+
+    $json += @"
+    { 
+        "Name":"$($storageQuota.LocalizedName)", 
+        "Location":"$location", 
+        "Category":"Storage", 
+        "CurrentValue":$($storageQuota.CurrentValue), 
+        "Limit":$($storageQuota.Limit),
+        "Usage":$usage 
+    }
+"@
+    
+    # Wrap in an array
+    $json = "[$json]"
+    $jsonObjects = $json | ConvertFrom-Json
+    $json = ''
+
+    $filename = $($currentAzContext.Subscription.Id)+".csv"
+
+    if (Test-Path -Path $datapath) 
+    {
+        $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
+    }
+    else
+    {
+        New-Item -Path "C:\Temp\QuotaUtil" -ItemType Directory
+        $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
+    }
+}
+
+$compress = @{
+    Path = "$datapath\*.csv"
+    CompressionLevel = "Fastest"
+    DestinationPath = "$datapath\quotautil.Zip"
+  }
+  
+Compress-Archive @compress
