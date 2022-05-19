@@ -124,8 +124,8 @@ foreach($subscription in $subscriptions)
 $compress = @{
     Path = "$datapath\*.csv"
     CompressionLevel = "Fastest"
-    DestinationPath = "$datapath\quotautil.Zip"
+    DestinationPath = "$datapath\quotautil.zip"
   }
   
 Compress-Archive @compress
-Remove-Item -Path "C:\Temp\QuotaUtil" -Include *.csv
+Remove-Item -Path "C:\Temp\QuotaUtil\*" -Include *.csv
