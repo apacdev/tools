@@ -13,13 +13,13 @@ $datapath = "C:\Temp\QuotaUtil"
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
 $subscriptions = Get-AzSubscription
 
-Write-Output $locations
-
 $json = ''
 
 # loops through subscription list
 foreach($subscription in $subscriptions)
 {
+    Write-Output "Currently fetch resource data from $subscription"
+
     # set the context from the current subscription
     Set-AzContext -Subscription $subscription
     $currentAzContext = Get-AzContext
@@ -82,6 +82,7 @@ foreach($subscription in $subscriptions)
     # Get Storage Quota
 
     $storageQuota = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
+
     $usage = 0
 
     if ($storageQuota.Limit -gt 0) 
@@ -110,11 +111,13 @@ foreach($subscription in $subscriptions)
     if (Test-Path -Path $datapath) 
     {
         $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
+        Write-Output "Resource data saved in $datapath\$filename`n"
     }
     else
     {
         New-Item -Path "C:\Temp\QuotaUtil" -ItemType Directory
         $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
+        Write-Output "Resource data saved in $datapath\$filename`n"
     }
 }
 
