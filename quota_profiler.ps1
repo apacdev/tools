@@ -128,3 +128,4 @@ $compress = @{
   }
   
 Compress-Archive @compress
+Remove-Item -Path "C:\Temp\QuotaUtil" -Include *.txt -WhatIf
