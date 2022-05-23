@@ -47,7 +47,7 @@ foreach($subscription in $subscriptions)
                 "Location":"$location", 
                 "CurrentValue":$($vmQuota.CurrentValue), 
                 "Limit":$($vmQuota.Limit),
-                "Usage":$usage
+                "Usage":"$(([math]::Round($usage, 2) * 100).ToString())%"
             },
 "@
         }
@@ -73,7 +73,7 @@ foreach($subscription in $subscriptions)
                 "Location":"$location", 
                 "CurrentValue":$($networkQuota.currentValue), 
                 "Limit":$($networkQuota.limit),
-                "Usage":$usage 
+                "Usage":"$(([math]::Round($usage, 2) * 100).ToString())%"
             },
 "@
         }
@@ -97,7 +97,7 @@ foreach($subscription in $subscriptions)
         "Category":"Storage", 
         "CurrentValue":$($storageQuota.CurrentValue), 
         "Limit":$($storageQuota.Limit),
-        "Usage":$usage 
+        "Usage":"$(([math]::Round($usage, 2) * 100).ToString())%" 
     }
 "@
     
