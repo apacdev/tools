@@ -127,5 +127,5 @@ $compress = @{
     DestinationPath = "$datapath\quotautil.zip"
   }
   
-Compress-Archive @compress
+Compress-Archive @compress -Force
 Remove-Item -Path "C:\Temp\QuotaUtil\*" -Include *.csv
