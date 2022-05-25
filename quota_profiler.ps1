@@ -36,7 +36,7 @@ $json = ''
 # loops through subscription list
 foreach($subscription in $subscriptions)
 {
-    Write-Output "Currently fetch resource data from $subscription"
+    Write-Output "Currently fetching resource data from $subscription"
     
     # set the context from the current subscription
     Set-AzContext -Subscription $subscription
@@ -160,3 +160,6 @@ foreach ($line in $csvContent)
 # zip up the individual files and clean up the temp files.
 Compress-Archive @compress -Force
 Remove-Item -Path "$datapath/temp/*" -Include *.csv
+
+Write-Output "`nProfiling completed." | Format-Table
+Get-ChildItem -Path $datapath
