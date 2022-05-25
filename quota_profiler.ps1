@@ -5,9 +5,8 @@
 # Author: Patrick Shim (pashim@microsoft.com)
 
 Clear-AzContext -Force
-Connect-AzAccount # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
-
-$datetime = [System.DateTime]::UtcNow
+Clear-Host
+$azaccount = Connect-AzAccount # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./QuotaUtil"
@@ -28,9 +27,8 @@ if (Test-Path -Path $datapath\all_subscriptions.csv -PathType Leaf)
 
 # retrives region list across the resources, and pull all the subscriptions in the tenant.
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
-
 $subscriptions = Get-AzSubscription
-
+$datetime = [System.DateTime]::UtcNow
 $json = ''
 
 # loops through subscription list
@@ -39,7 +37,7 @@ foreach($subscription in $subscriptions)
     Write-Output "Currently fetching resource data from $subscription"
     
     # set the context from the current subscription
-    Set-AzContext -Subscription $subscription
+    $subAzContext = Set-AzContext -Subscription $subscription
     $currentAzContext = Get-AzContext
 
     # Get VM Quota and Utilization
@@ -140,6 +138,9 @@ $csvContent = Get-Content "$datapath/temp/*.csv"
 #Just a monkey way to remove repeated column headers from each csv files... Anyone with better idea?
 $index = 0
 
+Clear-Host
+
+Write-Output "`n===== Finalizing the output files... =====" 
 foreach ($line in $csvContent)
 {
     if ($index -lt 1)
@@ -161,5 +162,5 @@ foreach ($line in $csvContent)
 Compress-Archive @compress -Force
 Remove-Item -Path "$datapath/temp/*" -Include *.csv
 
-Write-Output "`nProfiling completed." | Format-Table
+Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
