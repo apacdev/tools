@@ -140,16 +140,12 @@ $csvContent = Get-Content "$datapath/temp/*.csv"
 
 #Just a monkey way to remove repeated column headers from each csv files... Anyone with better idea?
 $index = 0
-
-Clear-Host
-
 Write-Output "`n===== Finalizing the output files... =====" 
 foreach ($line in $csvContent)
 {
     if ($index -lt 1)
     {
-        $line | Add-Content "$datapath/all_subscriptions.csv"
-    
+        $line | Add-Content "$datapath/all_subscriptions.csv"    
     }
     else
     {
