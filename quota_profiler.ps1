@@ -4,13 +4,25 @@
 # PARTICULAR PURPOSE.
 
 Clear-AzContext -Force
-Connect-AzAccount
 
-# path to the outfile (csv)
-$datapath = "C:\Temp\QuotaUtil"
+Connect-AzAccount # -UseDeviceAuthentication <- Uncomment this to use Device Authentication for MFA.
+
+$datetime = [System.DateTime]::UtcNow
+
+# path to the outfile (csv) - if you are to use "relative location (if you run this script unsaved, then the output will be saved in Users\{your folder}\"
+$datapath = "./QuotaUtil"
+
+# path to the outfile (csv) - if you are to use "absolute location"
+#$datapath = "c:/temp/QuotaUtil"
+
+if (!(Test-Path -Path $datapath/temp))
+{ 
+    New-Item $datapath/temp -ItemType Directory
+}
 
 # retrives region list across the resources, and pull all the subscriptions in the tenant.
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
+
 $subscriptions = Get-AzSubscription
 
 $json = ''
@@ -19,29 +31,29 @@ $json = ''
 foreach($subscription in $subscriptions)
 {
     Write-Output "Currently fetch resource data from $subscription"
-
+    
     # set the context from the current subscription
     Set-AzContext -Subscription $subscription
     $currentAzContext = Get-AzContext
-    
+
     # Get VM Quota and Utilization
     foreach ($location in $locations)
     {
         # Get a list of Compute resources under the current subscription context
-        $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue 
-        
+        $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue
+
         # Get usage data of each Compute resources 
         foreach($vmQuota in $vmQuotas)
         {
             $usage = 0
-            
             if ($vmQuota.Limit -gt 0)
             {
-                $usage = $vmQuota.CurrentValue / $vmQuota.Limit 
+                $usage = $vmQuota.CurrentValue / $vmQuota.Limit
             }
-
             $json += @"
             { 
+                "Date Time (UTC)":"$datetime",
+                "SubscriptionName":"$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))",
                 "Name":"$($vmQuota.Name.LocalizedValue)", 
                 "Category":"Compute", 
                 "Location":"$location", 
@@ -56,18 +68,20 @@ foreach($subscription in $subscriptions)
     # Get Network Quota and Utilization
     foreach ($location in $locations)
     {
-        $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue 
+        $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
         foreach ($networkQuota in $networkQuotas)
-        {  
+        {
             $usage = 0
-            
-            if ($networkQuota.limit -gt 0) 
-            { 
-                $usage = $networkQuota.currentValue / $networkQuota.limit 
+
+            if ($networkQuota.limit -gt 0)
+            {
+                $usage = $networkQuota.currentValue / $networkQuota.limit
             }
-            
+
             $json += @"
             { 
+                "Date Time (UTC)":"$datetime",
+                "SubscriptionName":"$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))",
                 "Name":"$($networkQuota.name.localizedValue)", 
                 "Category":"Network",
                 "Location":"$location", 
@@ -78,20 +92,20 @@ foreach($subscription in $subscriptions)
 "@
         }
     }
- 
+    
     # Get Storage Quota
-
     $storageQuota = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
-
     $usage = 0
-
-    if ($storageQuota.Limit -gt 0) 
-    { 
-        $usage = $storageQuota.CurrentValue / $storageQuota.Limit 
+    
+    if ($storageQuota.Limit -gt 0)
+    {
+        $usage = $storageQuota.CurrentValue / $storageQuota.Limit
     }
-
+    
     $json += @"
     { 
+        "Date Time (UTC)":"$datetime",
+        "SubscriptionName":"$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))",
         "Name":"$($storageQuota.LocalizedName)", 
         "Location":"$location", 
         "Category":"Storage", 
@@ -105,27 +119,17 @@ foreach($subscription in $subscriptions)
     $json = "[$json]"
     $jsonObjects = $json | ConvertFrom-Json
     $json = ''
-
     $filename = $($currentAzContext.Subscription.Id)+".csv"
-
-    if (Test-Path -Path $datapath) 
-    {
-        $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
-        Write-Output "Resource data saved in $datapath\$filename`n"
-    }
-    else
-    {
-        New-Item -Path "C:\Temp\QuotaUtil" -ItemType Directory
-        $jsonObjects | Export-Csv -Path $("$datapath\$filename") -NoTypeInformation
-        Write-Output "Resource data saved in $datapath\$filename`n"
-    }
+    $jsonObjects | Export-Csv -Path $("$datapath/temp/$filename") -NoTypeInformation
 }
 
 $compress = @{
-    Path = "$datapath\*.csv"
+    Path = "$datapath/temp/*.csv"
     CompressionLevel = "Fastest"
-    DestinationPath = "$datapath\quotautil.zip"
+    DestinationPath = "$datapath/quotautil.zip"
   }
-  
+
+$csvContent = Get-Content "$datapath/temp/*.csv"
 Compress-Archive @compress -Force
-Remove-Item -Path "C:\Temp\QuotaUtil\*" -Include *.csv
+Remove-Item -Path "$datapath/temp/*" -Include *.csv
+Add-Content "$datapath/all_subscriptions.csv" -Value $csvContent
