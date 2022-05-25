@@ -2,14 +2,14 @@
 # ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
 # PARTICULAR PURPOSE.
+# Author: Patrick Shim (pashim@microsoft.com)
 
 Clear-AzContext -Force
-
-Connect-AzAccount # -UseDeviceAuthentication <- Uncomment this to use Device Authentication for MFA.
+Connect-AzAccount # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
 $datetime = [System.DateTime]::UtcNow
 
-# path to the outfile (csv) - if you are to use "relative location (if you run this script unsaved, then the output will be saved in Users\{your folder}\"
+# path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./QuotaUtil"
 
 # path to the outfile (csv) - if you are to use "absolute location"
@@ -18,6 +18,12 @@ $datapath = "./QuotaUtil"
 if (!(Test-Path -Path $datapath/temp))
 { 
     New-Item $datapath/temp -ItemType Directory
+}
+
+# delete merged csv file to ensure no date is appended to old ones.
+if (Test-Path -Path $datapath\all_subscriptions.csv -PathType Leaf)
+{
+    Remove-Item -Path $datapath\all_subscriptions.csv -Force
 }
 
 # retrives region list across the resources, and pull all the subscriptions in the tenant.
@@ -65,7 +71,7 @@ foreach($subscription in $subscriptions)
         }
     }
 
-    # Get Network Quota and Utilization
+    # Get Network Quota and its utilization
     foreach ($location in $locations)
     {
         $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
@@ -93,7 +99,7 @@ foreach($subscription in $subscriptions)
         }
     }
     
-    # Get Storage Quota
+    # Get Storage Quota and its utilization
     $storageQuota = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
     $usage = 0
     
@@ -130,6 +136,27 @@ $compress = @{
   }
 
 $csvContent = Get-Content "$datapath/temp/*.csv"
+
+#Just a monkey way to remove repeated column headers from each csv files... Anyone with better idea?
+$index = 0
+
+foreach ($line in $csvContent)
+{
+    if ($index -lt 1)
+    {
+        $line | Add-Content "$datapath/all_subscriptions.csv"
+    
+    }
+    else
+    {
+        if (($line -notlike "*Date Time (UTC)*"))
+        {
+            $line | Add-Content "$datapath/all_subscriptions.csv"
+        }
+     }
+    $index += 1
+ }
+
+# zip up the individual files and clean up the temp files.
 Compress-Archive @compress -Force
 Remove-Item -Path "$datapath/temp/*" -Include *.csv
-Add-Content "$datapath/all_subscriptions.csv" -Value $csvContent
