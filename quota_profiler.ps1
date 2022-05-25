@@ -7,6 +7,7 @@
 Clear-AzContext -Force
 Clear-Host
 $azaccount = Connect-AzAccount # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
+$aztenant = Get-AzTenant
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./QuotaUtil"
@@ -30,6 +31,8 @@ $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-
 $subscriptions = Get-AzSubscription
 $datetime = [System.DateTime]::UtcNow
 $json = ''
+
+Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
 
 # loops through subscription list
 foreach($subscription in $subscriptions)
