@@ -128,6 +128,6 @@ foreach ($line in $csvContent) {
 
 # zip up the individual files and clean up the temp files.
 Compress-Archive @compress -Force
-Remove-Item -Path "$datapath/temp/*" -Include *.csv
+Remove-Item -Path "$datapath/temp/" -Recurse -Force
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
