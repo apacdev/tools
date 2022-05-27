@@ -29,7 +29,7 @@ if (Test-Path -Path $datapath\$merged_filename -PathType Leaf) {
 # retrives region list across the resources, and pull all the subscriptions in the tenant.
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
 $subscriptions = Get-AzSubscription
-$datetime = [System.DateTime]::UtcNow
+$datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
 $array = @()
 
 Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
