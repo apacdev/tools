@@ -12,7 +12,7 @@ Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to u
 $datapath = "./quotautil"
 
 # path to the outfile (csv) - if you are to use "absolute location"
-#$datapath = "c:/temp/QuotaUtil"
+# $datapath = "c:/temp/QuotaUtil"
 
 $merged_filename = "all_subscriptions.csv"
 
@@ -41,10 +41,11 @@ foreach($subscription in $subscriptions) {
     Set-AzContext -Subscription $subscription | Out-Null
     $currentAzContext = Get-AzContext
 
-    # Get VM Quota and Utilization
+    # loops through locations where the resources are deployed in
     foreach ($location in $locations) {
 
         Write-Output "Currently fetching resource data in $location / $subscription"
+
         # Get a list of Compute resources under the current subscription context
         $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue
         $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
@@ -65,6 +66,7 @@ foreach($subscription in $subscriptions) {
             $array += $object
         }
 
+        # Get usage data of each network resources 
         foreach ($networkQuota in $networkQuotas) {
 
             $usage = ($networkQuota.Limit -gt 0) ? $($networkQuota.CurrentValue / $networkQuota.Limit) : 0
@@ -78,10 +80,10 @@ foreach($subscription in $subscriptions) {
             $object | Add-Member -Name 'usage' -MemberType NoteProperty -Value "$(([math]::Round($usage, 2) * 100).ToString())%"
             $array += $object
         }
-    
+
+        # Get usage data of each network resources 
         foreach ($storageQuota in $storageQuotas) {
 
-            # Get Storage Quota and its utilization
             $usage = ($storageQuotas.Limit -gt 0) ? $($storageQuotas.CurrentValue / $storageQuotas.Limit) : 0
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
