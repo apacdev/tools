@@ -14,7 +14,7 @@ function Set-PSEnvironment {
 
         if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
 
-            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
             
             if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
                 Uninstall-AzureRm
@@ -127,7 +127,7 @@ foreach($subscription in $subscriptions) {
     # saves outputs into .csv file
     $filename = $($currentAzContext.Subscription.Id)+".csv"
     $objectarray | Export-Csv -Path $("$datapath/temp/$filename") -NoTypeInformation
-    $allsubscriptions += $array
+    $allsubscriptions += $objectarray
     $objectarray = @()
 }
 
@@ -142,3 +142,4 @@ Remove-Item -Path "$temppath/" -Recurse -Force
 # now the job is done...!
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
+
