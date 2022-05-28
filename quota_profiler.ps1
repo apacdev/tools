@@ -12,7 +12,9 @@ function Set-PSEnvironment {
 
     # if running on Windows OS
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-
+    
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        
         # install powershell 7+
         if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
 
@@ -32,8 +34,6 @@ function Set-PSEnvironment {
                 Uninstall-AzureRm
             }
         }
-        
-       Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     }
 }
 
