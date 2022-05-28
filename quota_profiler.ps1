@@ -32,7 +32,7 @@ function Set-PSEnvironment {
                 Uninstall-AzureRm
             }
         }
-
+        
        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
     }
 }
