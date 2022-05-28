@@ -18,15 +18,17 @@ function Set-PSEnvironment {
 
             # fetchs installation script from powershell github. the installation GUI will pop up.
             Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-            Write-Host "Powershell 7 is now installed..."
-            
-            # install az modules if it does not exist.
+            Write-Host "Powershell 7+ is now installed..."
+
+             # install az modules if it does not exist.
             if ($null -eq (Get-InstalledModule -Name "Az" -ErrorAction SilentlyContinue)) {
+                Write-Host "Installing Az Modules..."
                 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
             }
-            
+
             # remove AzureRm modules if exists..
             if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
+                Write-Host "Uninstalling AzureRm Modules..."
                 Uninstall-AzureRm
             }
         }
