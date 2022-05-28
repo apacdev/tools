@@ -7,6 +7,7 @@
 ############################################################################## 
 # a helper function to setup running environment for the script (windows only)
 ##############################################################################
+
 function Set-PSEnvironment {
 
     # if running on Windows OS
