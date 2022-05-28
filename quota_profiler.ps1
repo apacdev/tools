@@ -34,7 +34,6 @@ function Set-PSEnvironment {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 }
 
-
 ############################################################################## 
 # main
 ##############################################################################
