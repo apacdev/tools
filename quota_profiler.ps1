@@ -4,6 +4,32 @@
 # PARTICULAR PURPOSE.
 # Author: Patrick Shim (pashim@microsoft.com)
 
+############################################################################## 
+# a helper function to setup running environment for the script (windows only)
+##############################################################################
+function Set-PSEnvironment {
+
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+
+        if ($PSVersionTable.PSVersion.Major.ToString() + '.' + $PSVersionTable.PSVersion.Minor.ToString() -lt '7.2') {
+
+            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
+            
+            if ($null -ne (Get-InstalledModule ` -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
+                Uninstall-AzureRm
+            }
+
+            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+        }
+    }
+
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+}
+
+############################################################################## 
+# main
+##############################################################################
+
 Clear-Host
 Set-PSEnvironment
 Clear-AzContext -Force
