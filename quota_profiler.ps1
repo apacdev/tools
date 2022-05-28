@@ -21,9 +21,9 @@ function Set-PSEnvironment {
         }
 
         # install az modules if it does not exist.
-        if ($null -eq (Get-InstalledModule -Name "Az" -ErrorAction SilentlyContinue)) {
+        if ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
             Write-Host "Installing Az Modules..."
-            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force -SkipPublisherCheck
         }
 
         # remove AzureRm modules if exists..
