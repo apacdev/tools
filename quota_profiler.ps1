@@ -148,7 +148,7 @@ function Set-PSEnvironment {
 
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
 
-        if ($PSVersionTable.PSVersion.Major.ToString() + '.' + $PSVersionTable.PSVersion.Minor.ToString() -lt '7.2') {
+        if ( [int] $PSVersionTable.PSVersion.Major -lt 7.2) {
 
             Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
             
