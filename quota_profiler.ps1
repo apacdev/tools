@@ -31,6 +31,7 @@ $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-
 $subscriptions = Get-AzSubscription
 $datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
 $array = @()
+$allsubscriptions = @()
 
 Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
 
@@ -100,38 +101,18 @@ foreach($subscription in $subscriptions) {
     # saves outputs into .csv file
     $filename = $($currentAzContext.Subscription.Id)+".csv"
     $array | Export-Csv -Path $("$datapath/temp/$filename") -NoTypeInformation
+    $allsubscriptions += $array
     $array = @()
 }
 
-$compress = @{
-    Path = "$datapath/temp/*.csv"
-    CompressionLevel = "Fastest"
-    DestinationPath = "$datapath/quotautil.zip"
-}
+# process the consolidated objects to a .csv file
+$allsubscriptions | Export-Csv -Path $datapath/$merged_filename
+$allsubscriptions = @()
 
-# reads in all .csv file for further processing (zipping, removeing duplicated column headers, etc.)
-$csvContent = Get-Content "$datapath/temp/*.csv"
-
-#Just a monkey way to remove repeated column headers from each csv files... Anyone with better idea?
-$index = 0
-Write-Output "`n===== Finalizing the output files... =====" 
-
-foreach ($line in $csvContent) {
-
-    if ($index++ -lt 1) {
-        #leave the first column header alone
-        $line | Add-Content "$datapath/$merged_filename"
-    }
-    else { 
-        # remove duplicated column headers for the rest
-        if (($line -notlike "*datetime_in_utc*")) { 
-            $line | Add-Content "$datapath/$merged_filename" 
-        }
-     }
- }
-
-# zip up the individual files and clean up the temp files.
-Compress-Archive @compress -Force
+# zip the output files and tidy up the temp folder
+Compress-Archive -Path "$datapath/temp/*.csv" -CompressionLevel "Fastest" -DestinationPath "$datapath/quotautil.zip" -Force
 Remove-Item -Path "$datapath/temp/" -Recurse -Force
+
+# now the job is done...!
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
