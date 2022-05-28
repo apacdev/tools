@@ -42,7 +42,6 @@ function Set-PSEnvironment {
 ##############################################################################
 
 Set-PSEnvironment
-Clear-Host
 Clear-AzContext -Force
 Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
