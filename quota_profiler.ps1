@@ -7,18 +7,24 @@
 ############################################################################## 
 # a helper function to setup running environment for the script (windows only)
 ##############################################################################
-
 function Set-PSEnvironment {
 
+    # if running on Windows OS
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
 
+        # install powershell 7+
         if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
 
-            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
+            # fetchs installation script from powershell github. the installation GUI will pop up.
+            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+            Write-Host "Powershell 7 is now installed...`n"
             
+             # remove AzureRm modules if exists..
             if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
                 Uninstall-AzureRm
             }
+
+             # install az modules if it does not exist.
             if ($null -eq (Get-InstalledModule -Name "Az" -ErrorAction SilentlyContinue)) {
                 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
             }
@@ -27,6 +33,7 @@ function Set-PSEnvironment {
 
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 }
+
 
 ############################################################################## 
 # main
