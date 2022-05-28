@@ -14,7 +14,7 @@ function Set-PSEnvironment {
 
         if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
 
-            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
+            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
             
             if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
                 Uninstall-AzureRm
