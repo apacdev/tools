@@ -7,19 +7,21 @@
 ############################################################################## 
 # a helper function to setup running environment for the script (windows only)
 ##############################################################################
+
 function Set-PSEnvironment {
 
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
 
-        if ($PSVersionTable.PSVersion.Major.ToString() + '.' + $PSVersionTable.PSVersion.Minor.ToString() -lt '7.2') {
+        if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
 
             Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
             
-            if ($null -ne (Get-InstalledModule ` -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
+            if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
                 Uninstall-AzureRm
             }
-
-            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+            if ($null -eq (Get-InstalledModule -Name "Az" -ErrorAction SilentlyContinue)) {
+                Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+            }
         }
     }
 
@@ -30,8 +32,8 @@ function Set-PSEnvironment {
 # main
 ##############################################################################
 
-Clear-Host
 Set-PSEnvironment
+Clear-Host
 Clear-AzContext -Force
 Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
@@ -140,25 +142,3 @@ Remove-Item -Path "$temppath/" -Recurse -Force
 # now the job is done...!
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
-
-############################################################################## 
-# a helper function to setup running environment for the script (windows only)
-##############################################################################
-function Set-PSEnvironment {
-
-    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-
-        if ( [int] $PSVersionTable.PSVersion.Major -lt 7.2) {
-
-            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
-            
-            if ($null -ne (Get-InstalledModule ` -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
-                Uninstall-AzureRm
-            }
-
-            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
-        }
-    }
-
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-}
