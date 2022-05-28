@@ -5,15 +5,13 @@
 # Author: Patrick Shim (pashim@microsoft.com)
 
 Clear-Host
+Set-PSEnvironment
 Clear-AzContext -Force
 Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
-
-# path to the outfile (csv) - if you are to use "absolute location"
-# $datapath = "c:/temp/QuotaUtil"
-
+$temppath = "$datapath/temp"
 $merged_filename = "all_subscriptions.csv"
 
 # see if the data path exists and create one if not.
@@ -30,7 +28,7 @@ if (Test-Path -Path $datapath\$merged_filename -PathType Leaf) {
 $locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
 $subscriptions = Get-AzSubscription
 $datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
-$array = @()
+$objectarray = @()
 $allsubscriptions = @()
 
 Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
@@ -64,7 +62,7 @@ foreach($subscription in $subscriptions) {
             $object | Add-Member -Name 'current_value' -MemberType NoteProperty -Value $vmQuota.CurrentValue
             $object | Add-Member -Name 'limit' -MemberType NoteProperty -Value $vmQuota.Limit
             $object | Add-Member -Name 'usage' -MemberType NoteProperty -Value "$(([math]::Round($usage, 2) * 100).ToString())%"
-            $array += $object
+            $objectarray += $object
         }
 
         # Get usage data of each network resources 
@@ -79,7 +77,7 @@ foreach($subscription in $subscriptions) {
             $object | Add-Member -Name 'current_value' -MemberType NoteProperty -Value $networkQuota.CurrentValue
             $object | Add-Member -Name 'limit' -MemberType NoteProperty -Value $networkQuota.Limit
             $object | Add-Member -Name 'usage' -MemberType NoteProperty -Value "$(([math]::Round($usage, 2) * 100).ToString())%"
-            $array += $object
+            $objectarray += $object
         }
 
         # Get usage data of each network resources 
@@ -94,15 +92,15 @@ foreach($subscription in $subscriptions) {
             $object | Add-Member -Name 'current_value' -MemberType NoteProperty -Value $storageQuota.CurrentValue
             $object | Add-Member -Name 'limit' -MemberType NoteProperty -Value $storageQuota.Limit
             $object | Add-Member -Name 'usage' -MemberType NoteProperty -Value "$(([math]::Round($usage, 2) * 100).ToString())%"
-            $array += $object
+            $objectarray += $object
         }
     }
 
     # saves outputs into .csv file
     $filename = $($currentAzContext.Subscription.Id)+".csv"
-    $array | Export-Csv -Path $("$datapath/temp/$filename") -NoTypeInformation
+    $objectarray | Export-Csv -Path $("$datapath/temp/$filename") -NoTypeInformation
     $allsubscriptions += $array
-    $array = @()
+    $objectarray = @()
 }
 
 # process the consolidated objects to a .csv file
@@ -110,9 +108,31 @@ $allsubscriptions | Export-Csv -Path $datapath/$merged_filename
 $allsubscriptions = @()
 
 # zip the output files and tidy up the temp folder
-Compress-Archive -Path "$datapath/temp/*.csv" -CompressionLevel "Fastest" -DestinationPath "$datapath/quotautil.zip" -Force
-Remove-Item -Path "$datapath/temp/" -Recurse -Force
+Compress-Archive -Path "$temppath/*.csv" -CompressionLevel "Fastest" -DestinationPath "$datapath/quotautil.zip" -Force
+Remove-Item -Path "$temppath/" -Recurse -Force
 
 # now the job is done...!
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
+
+############################################################################## 
+# a helper function to setup running environment for the script (windows only)
+##############################################################################
+function Set-PSEnvironment {
+
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+
+        if ($PSVersionTable.PSVersion.Major.ToString() + '.' + $PSVersionTable.PSVersion.Minor.ToString() -lt '7.2') {
+
+            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI"
+            
+            if ($null -ne (Get-InstalledModule ` -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
+                Uninstall-AzureRm
+            }
+
+            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+        }
+    }
+
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+}
