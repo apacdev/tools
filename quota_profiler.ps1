@@ -55,7 +55,7 @@ foreach($subscription in $subscriptions) {
         # Get usage data of each Compute resources 
         foreach($vmQuota in $vmQuotas) {
 
-            $usage = ($vmQuota.Limit -gt 0) ? $($vmQuota.CurrentValue / $vmQuota.Limit) : 0
+            $usage = if($vmQuota.Limit -gt 0) {$($vmQuota.CurrentValue / $vmQuota.Limit)} else {0}
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
             $object | Add-Member -Name 'subscription_name' -MemberType NoteProperty -Value "$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))"
@@ -70,7 +70,7 @@ foreach($subscription in $subscriptions) {
         # Get usage data of each network resources 
         foreach ($networkQuota in $networkQuotas) {
 
-            $usage = ($networkQuota.Limit -gt 0) ? $($networkQuota.CurrentValue / $networkQuota.Limit) : 0
+            $usage = if($networkQuota.Limit -gt 0) {$($networkQuota.CurrentValue / $networkQuota.Limit)} else {0}
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
             $object | Add-Member -Name 'subscription_name' -MemberType NoteProperty -Value "$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))"
@@ -85,7 +85,7 @@ foreach($subscription in $subscriptions) {
         # Get usage data of each network resources 
         foreach ($storageQuota in $storageQuotas) {
 
-            $usage = ($storageQuotas.Limit -gt 0) ? $($storageQuotas.CurrentValue / $storageQuotas.Limit) : 0
+            $usage = if($storageQuotas.Limit -gt 0) {$($storageQuotas.CurrentValue / $storageQuotas.Limit)} else {0}
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
             $object | Add-Member -Name 'subscription_name' -MemberType NoteProperty -Value "$($currentAzContext.Subscription.Name) ($($CurrentAzContext.Subscription.Id))"
