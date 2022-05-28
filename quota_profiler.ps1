@@ -32,9 +32,9 @@ function Set-PSEnvironment {
                 Uninstall-AzureRm
             }
         }
-    }
 
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+       Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+    }
 }
 
 ############################################################################## 
@@ -42,6 +42,7 @@ function Set-PSEnvironment {
 ##############################################################################
 
 Set-PSEnvironment
+Clear-Host
 Clear-AzContext -Force
 Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
@@ -150,4 +151,3 @@ Remove-Item -Path "$temppath/" -Recurse -Force
 # now the job is done...!
 Write-Output "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
-
