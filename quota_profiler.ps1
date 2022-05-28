@@ -15,10 +15,9 @@ function Set-PSEnvironment {
 
         # install powershell 7+
         if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
-
             # fetchs installation script from powershell github. the installation GUI will pop up.
+            Write-Host "Trying to install Powershell 7+ is now..."
             Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-            Write-Host "Powershell 7+ is now installed..."
         }
 
         # install az modules if it does not exist.
