@@ -14,12 +14,8 @@ The script is tested on PowerShell 7.0 with Az Modules installed.  Run the follo
 
 Simply fetch this quota_profiler.ps1 to your local drive and run it in your powershell.  You can also run the script directly from this repo by running the following command at your powershell prompt: 
 
-[PowerShell 5.1]
-     
-     pwd -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
-
 [Powershell 7.0]
 
-    powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
+    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
 
 
