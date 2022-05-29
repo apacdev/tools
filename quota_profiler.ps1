@@ -5,40 +5,9 @@
 # Author: Patrick Shim (pashim@microsoft.com)
 
 ############################################################################## 
-# a helper function to setup running environment for the script (windows only)
-##############################################################################
-
-function Set-PSEnvironment {
-
-    # if running on Windows OS
-    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-
-        # install powershell 7+
-        if ([int]$PSVersionTable.PSVersion.Major -lt 7) {
-            # fetchs installation script from powershell github. the installation GUI will pop up.
-            Write-Host "Trying to install Powershell 7+ is now..."
-            Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-        }
-
-        # install az modules if it does not exist.
-        if ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
-            Write-Host "Installing Az Modules..."
-            Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force -SkipPublisherCheck
-        }
-
-        # remove AzureRm modules if exists..
-        if ($null -ne (Get-InstalledModule -Name "AzureRm.Profile" -ErrorAction SilentlyContinue)) {
-            Write-Host "Uninstalling AzureRm Modules..."
-            Uninstall-AzureRm
-        }
-    }
-}
-
-############################################################################## 
 # main
 ##############################################################################
 
-Set-PSEnvironment
 Clear-Host
 Clear-AzContext -Force
 Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
