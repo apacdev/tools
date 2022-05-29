@@ -6,13 +6,19 @@ The script retrieves quota usage vs. approaved across all subscriptions under yo
 
 [PREREQUISITE]
 
-The script is tested on PowerShell 7.0 with Az Modules installed.  Run the following line in your powershell.  It's a quick and dirty way to check the running envinroment and setup.
+The script is tested on PowerShell 7.0 with Az Modules installed.  Run the following line in your powershell.  It's a quick and dirty way to check the running envinroment and setup.  You may need to run this again after PowerShell 7.0 is installed for the script to run the rest using 'pwsh'.
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
 [USAGE]
 
 Simply fetch this quota_profiler.ps1 to your local drive and run it in your powershell.  You can also run the script directly from this repo by running the following command at your powershell prompt: 
+
+[PowerShell 5.1]
+     
+     pwd -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
+
+[Powershell 7.0]
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
 
