@@ -1,4 +1,4 @@
-﻿# if running on Windows OS
+# if running on Windows OS
 if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
 
     # install powershell 7.2+
@@ -26,7 +26,6 @@ if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
         Write-Host "Uninstalling AzureRm Modules. This will take a while.."
         if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
                 Start-Process powershell -Verb RunAs "-NoProfile -ExecutionPolicy ByPass -Command Uninstall-AzureRM"
-            }
         }
     }
 } 
