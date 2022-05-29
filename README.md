@@ -17,11 +17,12 @@ Simply fetch this quota_profiler.ps1 to your local drive and run it in your powe
 [REFERENCE]
 
 A quick and dirty way to check the running envinroment and setup.
+
     function Set-PSEnvironment {
 
     # if running on Windows OS
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-
+    
         # install powershell 7.2+
         if ([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 72) {
 
@@ -47,7 +48,6 @@ A quick and dirty way to check the running envinroment and setup.
             Write-Host "Uninstalling AzureRm Modules. This will take a while.."
             if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
                     Start-Process powershell -Verb RunAs "-NoProfile -ExecutionPolicy ByPass -Command Uninstall-AzureRM"
-                }
             }
         }
     } 
