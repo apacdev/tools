@@ -6,13 +6,13 @@ The script retrieves quota usage vs. approaved across all subscriptions under yo
 
 [PREREQUISITE]
 
-The script is tested on PowerShell 7.0 with Az Modules installed.  Run the following line in your Command Line (Win + R -> cmd.exe).  It's a quick and dirty way to check the running envinroment and setup.  You may need to run this again after PowerShell 7.0 is installed for the script to run the rest using 'pwsh'.
+The script is tested on PowerShell 7.0 with Az Modules installed.  Run the following line in your Command Line (Win + R -> cmd.exe).  It's a quick and dirty way to check the running envinroment and setup.  You may need to **run this again after PowerShell 7.0 is installed** for the script to run the rest using 'pwsh'.
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
 [USAGE]
 
-Simply fetch this quota_profiler.ps1 to your local drive and run it in your powershell (pwsh).  You can also run the script directly from this repo by running the following command at your Command Line prompt. Go to Run (Win + R) and enter "cmd.exe".  At the command prompt, copy and paste the below pwsh command to run (you do not need Admin right).
+Once your running environment is ready (refer to the Prerequisite section above), simply fetch this quota_profiler.ps1 to your local drive and run it in your powershell (pwsh).  You can also run the script directly from this repo by running the following command at your Command Line prompt. Go to Run (Win + R) and enter "cmd.exe".  At the command prompt, copy and paste the below pwsh command to run (you do not need Admin right).
 
     pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
 
