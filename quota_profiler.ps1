@@ -10,7 +10,7 @@
 
 Clear-Host
 Clear-AzContext -Force
-Connect-AzAccount | Out-Null # -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
+Connect-AzAccount | Out-Null -UseDeviceAuthentication # <= Uncomment this to use Device Authentication for MFA.
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
