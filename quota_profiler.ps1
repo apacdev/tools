@@ -6,7 +6,8 @@
 
 function Get-PSEnvironmentValidation() {
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
-        return [bool] (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore') ? $true : $false
+        if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
+            return $true} else {return $false}
     }
     else {    
         Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please 
@@ -18,16 +19,15 @@ function Get-PSEnvironmentValidation() {
 # main (PowerShell 7 indded as tenary operator is used)
 ##############################################################################
 
+# ensure that the right version of powershell is ready on the system.  
+if (-not (Get-PSEnvironmentValidation)) {
+    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the ReadMe of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    break;
+}
+
 Clear-Host
 Clear-AzContext -Force -ErrorAction SilentlyContinue
 Connect-AzAccount -WarningAction SilentlyContinue | Out-Null # use -UseDeviceAuthentication option for Device Authentication for MFA. 
-
-# ensure that the right version of powershell is ready on the system.  
-if (-not (Get-PSEnvironmentValidation)) {
-    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the ReadMe of this repository `
-    and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
-    exit;
-}
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
@@ -37,12 +37,12 @@ $merged_filename = "all_subscriptions.csv"
 # retrives list of subscripotions and regions (where resources are deployed in).
 if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue)) {
     Write-Output "There seems to be no subscriptions your Azure account. Nothing to process!"
-    Exit;
+    break;
 }
 
 if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique ))) {
     Write-Output "There seems to be no resources deployed in your Azure account. Nothing to process!"
-    Exit;
+    break;
 }
 
 # keeps the date-time of when script ran.
@@ -89,7 +89,7 @@ foreach($subscription in $subscriptions) {
 
             Write-Host 'An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.'
             Write-Host $_.ScriptStackTrace
-            Exit;
+            break;
         }
         
         # Get usage data of each Compute resources 
