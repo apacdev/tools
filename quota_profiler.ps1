@@ -4,13 +4,30 @@
 # PARTICULAR PURPOSE.
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
+function Get-PSEnvironmentValidation() {
+    if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+        return [bool] (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore') ? $true : $false
+    }
+    else {    
+        Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please 
+        `ensure to install PowerShell 7. The auto-installation on such systems will be work in progress.'
+    }
+}
+
 ############################################################################## 
-# main (PowerShell 7 needed as tenary operator is used)
+# main (PowerShell 7 indded as tenary operator is used)
 ##############################################################################
 
 Clear-Host
 Clear-AzContext -Force -ErrorAction SilentlyContinue
 Connect-AzAccount -WarningAction SilentlyContinue | Out-Null # use -UseDeviceAuthentication option for Device Authentication for MFA. 
+
+# ensure that the right version of powershell is ready on the system.  
+if (-not (Get-PSEnvironmentValidation)) {
+    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the ReadMe of this repository `
+    and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    exit;
+}
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
@@ -68,9 +85,10 @@ foreach($subscription in $subscriptions) {
             $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
             $storageQuotas = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
 
-        } catch {
+        } catch [System.SystemException] {
 
             Write-Host 'An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.'
+            Write-Host $_.ScriptStackTrace
             Exit;
         }
         
