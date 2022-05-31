@@ -9,13 +9,27 @@
 ##############################################################################
 
 Clear-Host
-Clear-AzContext -Force
-Connect-AzAccount -UseDeviceAuthentication | Out-Null # <= Uncomment this to use Device Authentication for MFA.
+Clear-AzContext -Force -ErrorAction SilentlyContinue
+Connect-AzAccount -WarningAction SilentlyContinue | Out-Null # use -UseDeviceAuthentication option for Device Authentication for MFA. 
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
 $temppath = "$datapath/temp"
 $merged_filename = "all_subscriptions.csv"
+
+# retrives list of subscripotions and regions (where resources are deployed in).
+if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue)) {
+    Write-Output "There seems to be no subscriptions your Azure account. Nothing to process!"
+    Exit;
+}
+
+if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique ))) {
+    Write-Output "There seems to be no resources deployed in your Azure account. Nothing to process!"
+    Exit;
+}
+
+# keeps the date-time of when script ran.
+$datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
 
 # see if the data path exists and create one if not.
 if (!(Test-Path -Path $datapath/temp)) { 
@@ -27,10 +41,7 @@ if (Test-Path -Path $datapath\$merged_filename -PathType Leaf) {
     Remove-Item -Path $datapath\$merged_filename -Force
 }
 
-# retrives region list across the resources, and pull all the subscriptions in the tenant.
-$locations = Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique
-$subscriptions = Get-AzSubscription
-$datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
+# initialize temporary variables...
 $objectarray = @()
 $allsubscriptions = @()
 
@@ -39,19 +50,29 @@ Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n
 # loops through subscription list
 foreach($subscription in $subscriptions) {
 
+    # may not needed but just to make sure that the resource provider is regigered in the subscriptions.
+    Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity -ConsentToPermissions $true -ErrorAction SilentlyContinue | Out-Null
+
     # set the context from the current subscription
     Set-AzContext -Subscription $subscription | Out-Null
     $currentAzContext = Get-AzContext
-
+    
     # loops through locations where the resources are deployed in
     foreach ($location in $locations) {
 
         Write-Output "Currently fetching resource data in $location / $subscription"
+        try {
 
-        # Get a list of Compute resources under the current subscription context
-        $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue
-        $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
-        $storageQuotas = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
+            # Get a list of Compute resources under the current subscription context
+            $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue
+            $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
+            $storageQuotas = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
+
+        } catch {
+
+            Write-Host 'An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.'
+            Exit;
+        }
         
         # Get usage data of each Compute resources 
         foreach($vmQuota in $vmQuotas) {
