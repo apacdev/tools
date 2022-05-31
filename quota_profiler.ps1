@@ -5,7 +5,7 @@
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
 ############################################################################## 
-# main (PowerShell 7 indded as tenary operator is used)
+# main (PowerShell 7 needed as tenary operator is used)
 ##############################################################################
 
 Clear-Host
