@@ -38,9 +38,6 @@ function Install-Powershell() {
             & bash "$datapath/$temppath/$sh_filename"
         }
     }
-    if ($false) {
-        Write-Host 'You seem to running neither Windows or MacOS...'
-    }
 }
 
 # install az modules if it does not exist on your machines.
