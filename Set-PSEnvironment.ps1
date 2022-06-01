@@ -23,9 +23,10 @@ function Install-Powershell() {
               Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
               Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
               Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
-        }
-        
-    }elseif (($PSVersionTable.OS) -match 'Darwin') {
+        }  
+    }
+    
+    if (($PSVersionTable.OS) -match 'Darwin') {
         Write-Host 'MacOS is found...'
         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
             Write-Host 'Powershell 7 is found on your MacOS system...' 
@@ -39,9 +40,6 @@ function Install-Powershell() {
             & bash "$datapath/$temppath/$sh_filename"
         }
     } 
-    else {
-        Write-Host 'Linux OS is fouund / work-in-progress'
-    }
 }
 
 # install az modules if it does not exist on your machines.
