@@ -5,8 +5,9 @@
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
 function Get-PSEnvironmentValidation() {
-
+    # check for OS environment
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+        # if on Windows, easiest way to check PS7 installation is to peek into Windows Registry.
         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
             return $true
         } 
@@ -14,8 +15,9 @@ function Get-PSEnvironmentValidation() {
             return $false
         }
     }
+    # if non-Windows is detected, the script continues even there is no PS7 detected, and you may encounter an error (work-in-progress).
     else {    
-        Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please ensure to install PowerShell 7. The auto-installation on non-Windows systems is still work in progress.'
+        Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please ensure that you have PowerShell 7 installed. The auto-installation on non-Windows systems is still work in progress.'
         return $true
     }
 }
@@ -24,7 +26,7 @@ function Get-PSEnvironmentValidation() {
 # main (PowerShell 7 indded as tenary operator is used)
 ##############################################################################
 
-# ensure that the right version of powershell is ready on the system.  
+# ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
 if (-not (Get-PSEnvironmentValidation)) {
     Write-Host 'PowerShell 7 is not found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
