@@ -13,43 +13,32 @@ $sh_filename = "no-win-script.sh"
 ##########################################################################################
 
 function Install-AzModules() {
-
-     Write-Host 'The installation of Powershell 7 is found on your machine.'    
-     
-     # PowerShell 7 script block to install az modules on your system.
-     pwsh -NoProfile -ExecutionPolicy ByPass -Command {
-          # command block to see if az modules are not found for your PowerShell 7, it fetches and install them.
-          If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
-               Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
-               Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
-          } 
-          else {
-               Write-Output 'Az modules are found...'
-          }
-     }
-}
-
-# installs powershell 7 accordingly to your OS environment.
-function Install-Powershell() {
-
      if (($PSVersionTable.OS) -match 'Microsoft Windows') {
-
-         if ($true -ne (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
-              Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
-              Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-              Write-Host 'Powershell 7 is now installed on your machine.  Please CLOSE and REOPEN the current PowerShell window, then run the script again.'
-        } 
-        else { Write-Host 'Powershell 7 is found on your system...' }
-     }
+         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
+               Write-Host 'Powershell 7 is found on your system...' 
+         } 
+         else { 
+               Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
+               Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+               Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
+         }
+     }    
      elseif (($PSVersionTable.OS) -match 'Darwin') {
 
-         Write-Host 'MacOS detected... continuing with bash script to install Brew and PowerShell...'
-         '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
-         '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
-         'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
-         & bash "$datapath/$temppath/$sh_filename"
+         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
+             Write-Host 'Powershell 7 is found on your system...' 
+         } 
+         else {
+             Write-Host ' > PowerShell 7 on your MacOS is detected... continuing with bash script to install Brew and PowerShell...'
+             '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
+             '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
+             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
+             & bash "$datapath/$temppath/$sh_filename"
+         }
      }
-     else { Write-Host 'You seem to running neither Windows or MacOS...' }
+     else {
+         Write-Host 'You seem to running neither Windows or MacOS...'
+     }
 }
 
 # prepares for temporary script location.
