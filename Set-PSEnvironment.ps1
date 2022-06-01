@@ -12,7 +12,7 @@ $sh_filename = "no-win-script.sh"
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
 
-function Install-AzModules() {
+function Install-Powershell() {
 
      if (($PSVersionTable.OS) -match 'Microsoft Windows') {
          if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
