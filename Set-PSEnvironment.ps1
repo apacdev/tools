@@ -74,7 +74,7 @@ function Remove-AzureRM() {
                Write-Host "Uninstalling AzureRm Modules. This will take a while..."
                Uninstall-AzureRM -PassThru
           }
-     } else { Write-host 'The legacy AzureRM is not found on your system.'}
+     } else { Write-host 'The legacy AzureRM is not found on your system (which means good!).'}
 }
 
 # aggregate all fuction calls.
