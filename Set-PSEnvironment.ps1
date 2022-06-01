@@ -15,6 +15,7 @@ $sh_filename = "no-win-script.sh"
 function Install-Powershell() {
 
     if (($PSVersionTable.OS) -match 'Microsoft Windows') {
+        Write-Host 'Windows OS is found...'
         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
               Write-Host 'Powershell 7 is found on your Windows system...' 
         } 
@@ -23,9 +24,9 @@ function Install-Powershell() {
               Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
               Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
         }
-    }    
-    if (($PSVersionTable.OS) -match 'Darwin') {
-
+        
+    }elseif (($PSVersionTable.OS) -match 'Darwin') {
+        Write-Host 'MacOS is found...'
         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
             Write-Host 'Powershell 7 is found on your MacOS system...' 
         } 
@@ -37,6 +38,8 @@ function Install-Powershell() {
             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
             & bash "$datapath/$temppath/$sh_filename"
         }
+    } else {
+        Write-Host 'Linux OS is fouund / work-in-progress'
     }
 }
 
