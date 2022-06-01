@@ -32,8 +32,8 @@ function Set-PSEnvironment() {
                          # Prompt the user and remove AzureRM modules with Admin Rights.
                          Write-Host 'AzureRM is found, and it is about to be removed. You need to give an administrator access if prompted.'
                          if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-                                 Write-Host "Uninstalling AzureRm Modules. This will take a while..."
-                               Uninstall-AzureRM -PassThru
+                              Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+                              Uninstall-AzureRM -PassThru
                          }
                     }
                }
