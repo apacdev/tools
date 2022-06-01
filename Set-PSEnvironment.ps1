@@ -14,32 +14,32 @@ $sh_filename = "no-win-script.sh"
 
 function Install-Powershell() {
 
-     if (($PSVersionTable.OS) -match 'Microsoft Windows') {
-         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
-               Write-Host 'Powershell 7 is found on your system...' 
-         } 
-         else { 
-               Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
-               Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-               Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
-         }
-     }    
-     elseif (($PSVersionTable.OS) -match 'Darwin') {
+    if (($PSVersionTable.OS) -match 'Microsoft Windows') {
+        if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
+              Write-Host 'Powershell 7 is found on your Windows system...' 
+        } 
+        else { 
+              Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
+              Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+              Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
+        }
+    }    
+    elseif (($PSVersionTable.OS) -match 'Darwin') {
 
-         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
-             Write-Host 'Powershell 7 is found on your system...' 
-         } 
-         else {
-             Write-Host ' > PowerShell 7 on your MacOS is detected... continuing with bash script to install Brew and PowerShell...'
-             '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
-             '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
-             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
-             & bash "$datapath/$temppath/$sh_filename"
-         }
-     }
-     else {
-         Write-Host 'You seem to running neither Windows or MacOS...'
-     }
+        if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
+            Write-Host 'Powershell 7 is found on your MacOS system...' 
+        } 
+        else {
+            Write-Host ' > PowerShell 7 on your MacOS is detected... continuing with bash script to install Brew and PowerShell...'
+            '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
+            '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
+            'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
+            & bash "$datapath/$temppath/$sh_filename"
+        }
+    }
+    else {
+        Write-Host 'You seem to running neither Windows or MacOS...'
+    }
 }
 
 # install az modules if it does not exist on your machines.
