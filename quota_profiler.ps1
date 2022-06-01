@@ -6,7 +6,7 @@
 
 function Get-PSEnvironmentValidation() {
     # check for OS environment
-    if ($PSVersationTable.OS -match 'Microsoft Windows') {
+    if ($PSVersionTable.OS -match 'Microsoft Windows') {
         # if on Windows, easiest way to check PS7 installation is to peek into Windows Registry.
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
