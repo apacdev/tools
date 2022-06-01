@@ -24,20 +24,21 @@ function Install-Powershell() {
               Write-Host 'Please CLOSE and REOPEN the current PowerShell window, then run the script again if PowerShell 7.0 is successfully installed.'
         }
     }    
-    elseif (($PSVersionTable.OS) -match 'Darwin') {
+    if (($PSVersionTable.OS) -match 'Darwin') {
 
         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
             Write-Host 'Powershell 7 is found on your MacOS system...' 
         } 
         else {
             Write-Host ' > PowerShell 7 on your MacOS is detected... continuing with bash script to install Brew and PowerShell...'
+            Set-FolderPath
             '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
             '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
             & bash "$datapath/$temppath/$sh_filename"
         }
     }
-    else {
+    if ($false) {
         Write-Host 'You seem to running neither Windows or MacOS...'
     }
 }
@@ -84,7 +85,7 @@ function Remove-AzureRM() {
 
 # aggregate all fuction calls.
 function Set-PSEnvironment() {
-     Set-FolderPath
+
      Install-Powershell         
      Install-AzModules
      Remove-AzureRM
