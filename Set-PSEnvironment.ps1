@@ -13,6 +13,7 @@ $sh_filename = "no-win-script.sh"
 ##########################################################################################
 
 function Install-AzModules() {
+
      if (($PSVersionTable.OS) -match 'Microsoft Windows') {
          if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
                Write-Host 'Powershell 7 is found on your system...' 
