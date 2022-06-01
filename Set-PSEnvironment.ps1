@@ -27,7 +27,7 @@ function Install-Powershell() {
     }
     
     if (([System.Environment]::OSVersion.Platform) -match 'Unix') {
-        Write-Host 'MacOS is found...'
+        Write-Host 'MacOS or Linux/Unix is found. PS5 is not supported either on MacOS or Linux/Unix, so it will do a version check, then installs PowerShell 7.'
         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
             Write-Host 'Powershell 7 is found on your MacOS system...' 
         } 
@@ -36,6 +36,7 @@ function Install-Powershell() {
             Set-FolderPath
             '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
             '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
+            # assumes that you are trying this on MacOS (this may fail).
             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
             & bash "$datapath/$temppath/$sh_filename"
         }
