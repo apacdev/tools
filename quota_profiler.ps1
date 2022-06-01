@@ -5,13 +5,18 @@
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
 function Get-PSEnvironmentValidation() {
+
     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
-            return $true} else {return $false}
+            return $true
+        } 
+        else {
+            return $false
+        }
     }
     else {    
-        Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please 
-        `ensure to install PowerShell 7. The auto-installation on such systems will be work in progress.'
+        Write-Host 'You seem to be running the script on non-Windows environment.  If you encounter an error, please ensure to install PowerShell 7. The auto-installation on non-Windows systems is still work in progress.'
+        return $true
     }
 }
 
@@ -21,7 +26,7 @@ function Get-PSEnvironmentValidation() {
 
 # ensure that the right version of powershell is ready on the system.  
 if (-not (Get-PSEnvironmentValidation)) {
-    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the ReadMe of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
 }
 
