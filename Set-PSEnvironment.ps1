@@ -42,6 +42,24 @@ function Install-Powershell() {
      }
 }
 
+# install az modules if it does not exist on your machines.
+function Install-AzModules() {
+
+     Write-Host 'The installation of Powershell 7 is found on your machine.'    
+     
+     # PowerShell 7 script block to install az modules on your system.
+     pwsh -NoProfile -ExecutionPolicy ByPass -Command {
+          # command block to see if az modules are not found for your PowerShell 7, it fetches and install them.
+          If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
+               Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
+               Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
+          } 
+          else {
+               Write-Output 'Az modules are found...'
+          }
+     }
+}
+
 # prepares for temporary script location.
 function Set-FolderPath() {
 
