@@ -7,33 +7,30 @@
 ##########################################################################################
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
+
 function Set-PSEnvironment() {
 
      # check OS platform of the machine.
      if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
           # if Windows, then it peeks into Windows Registry to see if PowerShell 7 is installed.
           if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
-               Write-Host 'The installation of Powershell 7 is found on your machine.'
-               
-               # if PowerShell 7 is found, then use pwsh (instead of powershell) to get Az Modules installed with a command block.
+               # if PowerShell 7 is found, prompt the user, then use pwsh (instead of powershell) to get Az Modules installed with a command block.
+               Write-Host 'The installation of Powershell 7 is found on your machine.'    
                pwsh -NoProfile -ExecutionPolicy ByPass -Command {
-
+               
+                    # if az modules are not found for your PowerShell 7, it fetches and install them.
                     If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
-                         # if az modules are not found for your PowerShell 7, it fetches and install them.
                          Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
                          Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
                     } 
                     else {
-                         # if az modules are found, you are all set.
                          Write-Output 'Az modules are found. You are good to go!'
                     }
                     
                     # now, it is time to remove AzureRM modules.  
                     if (-not $null -eq (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue)) {
-
+                         # Prompt the user and remove AzureRM modules with Admin Rights.
                          Write-Host 'AzureRM is found, and it is about to be removed. You need to give an administrator access if prompted.'
-                         
-                         # Remove AzureRM modules with Admin Rights.
                          if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
                                  Write-Host "Uninstalling AzureRm Modules. This will take a while..."
                                Uninstall-AzureRM -PassThru
