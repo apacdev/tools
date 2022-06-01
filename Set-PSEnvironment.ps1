@@ -38,7 +38,8 @@ function Install-Powershell() {
             'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
             & bash "$datapath/$temppath/$sh_filename"
         }
-    } else {
+    } 
+    else {
         Write-Host 'Linux OS is fouund / work-in-progress'
     }
 }
