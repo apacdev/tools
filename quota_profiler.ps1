@@ -8,13 +8,16 @@ function Get-PSEnvironmentValidation() {
     # check for OS environment
     if ($PSVersionTable.OS -match 'Microsoft Windows') {
         # if on Windows, easiest way to check PS7 installation is to peek into Windows Registry.
+        Write-Host 'OS: Windows'
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
     # if non-Windows is detected, the script continues even there is no PS7 detected, and you may encounter an error (work-in-progress).
-    elseif ($PSVersionTable.OS -match 'Darwin') {    
+    elseif ($PSVersionTable.OS -match 'Darwin') {
         # on MacOS, there is no easy way to check if it has the latest PS is installed.
+        Write-Host 'OS: MacOS'
         return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
     } else {
+        Write-Host 'OS: Linux or Unix'
         Write-Host 'Work-in-progress for other OS environment...'
     }
 }
