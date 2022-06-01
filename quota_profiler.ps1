@@ -26,13 +26,14 @@ function Get-PSEnvironmentValidation() {
 # main (PowerShell 7 indded as tenary operator is used)
 ##############################################################################
 
+Clear-Host
+
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
 if (-not (Get-PSEnvironmentValidation)) {
     Write-Host 'PowerShell 7 is not found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
 }
 
-Clear-Host
 Clear-AzContext -Force -ErrorAction SilentlyContinue
 Connect-AzAccount -WarningAction SilentlyContinue | Out-Null # use -UseDeviceAuthentication option for Device Authentication for MFA. 
 
