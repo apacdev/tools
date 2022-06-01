@@ -32,7 +32,7 @@ function Install-AzModules() {
 # installs powershell 7 accordingly to your OS environment.
 function Install-Powershell() {
 
-     if ([System.Environment]::OSVersion.Platform -eq 'Win32NT') {
+     if (($PSVersionTable.OS) -match 'Microsoft Windows') {
 
           if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
                Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
