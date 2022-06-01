@@ -14,7 +14,7 @@ $sh_filename = "no-win-script.sh"
 
 function Install-Powershell() {
 
-    if (($PSVersionTable.OS) -match 'Microsoft Windows') {
+    if (([System.Environment]::OSVersion.Platform) -match 'Win32NT') {
         Write-Host 'Windows OS is found...'
         if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
               Write-Host 'Powershell 7 is found on your Windows system...' 
@@ -26,7 +26,7 @@ function Install-Powershell() {
         }  
     }
     
-    if (($PSVersionTable.OS) -match 'Darwin') {
+    if (([System.Environment]::OSVersion.Platform) -match 'Unix') {
         Write-Host 'MacOS is found...'
         if([int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) {
             Write-Host 'Powershell 7 is found on your MacOS system...' 
