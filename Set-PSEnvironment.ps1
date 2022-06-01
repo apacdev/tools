@@ -34,20 +34,20 @@ function Install-Powershell() {
 
      if (($PSVersionTable.OS) -match 'Microsoft Windows') {
 
-          if ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
-               Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
-               Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-               Write-Host 'Powershell 7 is now installed on your machine.  Please CLOSE and REOPEN the current PowerShell window, then run the script again.'
-         } 
-         else { Write-Host 'Powershell 7 is found on your system.  You are all good!' }
+         if ($true -ne (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) {
+              Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
+              Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+              Write-Host 'Powershell 7 is now installed on your machine.  Please CLOSE and REOPEN the current PowerShell window, then run the script again.'
+        } 
+        else { Write-Host 'Powershell 7 is found on your system...' }
      }
      elseif (($PSVersionTable.OS) -match 'Darwin') {
 
-          Write-Host 'MacOS detected... continuing with bash script to install Brew and PowerShell...'
-          '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
-          '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
-          'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
-          & bash "$datapath/$temppath/$sh_filename"
+         Write-Host 'MacOS detected... continuing with bash script to install Brew and PowerShell...'
+         '#!/usr/bin/env sh' | Out-File  $datapath/$temppath/$sh_filename -Force
+         '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"' | Out-File $datapath/$temppath/$sh_filename -Append
+         'brew install --cask powershell' | Out-File $datapath/$temppath/$sh_filename -Append
+         & bash "$datapath/$temppath/$sh_filename"
      }
      else { Write-Host 'You seem to running neither Windows or MacOS...' }
 }
