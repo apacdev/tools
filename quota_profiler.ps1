@@ -4,6 +4,8 @@
 # PARTICULAR PURPOSE.
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
+Clear-Host
+
 function Get-PSEnvironmentValidation() {
     # check for OS environment
     if ($PSVersionTable.OS -match 'Microsoft Windows') {
@@ -25,8 +27,6 @@ function Get-PSEnvironmentValidation() {
 ############################################################################## 
 # main (PowerShell 7 indded as tenary operator is used)
 ##############################################################################
-
-Clear-Host
 
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
 if (-not (Get-PSEnvironmentValidation)) {
