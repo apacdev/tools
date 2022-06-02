@@ -6,10 +6,18 @@ The script retrieves quota usage vs. approved across all subscriptions under you
 
 [PREREQUISITE]
 
+**For Windows Users**:
 The script is tested on PowerShell 7.0 with Az Modules installed.  It's a quick and dirty way to check the running environment and setup.  1) Go to Run (Win + R) and enter "cmd.exe".  2) At the command prompt, copy and paste the below powershell command to run (you do not need Admin right). Note: You may need to **run this again after PowerShell 7.0 is installed** for the script to continue setting up of Az Modules.
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
-    
+
+**For MacOS Users**:
+Please have PowerShell Core installed before you proceed.  PowerShell Core installation requires Homebrew on your system.  Please refer to the following snippet to install Homebrew, PowerShell Core, and to run the Prerequisite script.
+
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install --cask powershell
+    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+
 [USAGE]
 
 Once your running environment is ready (refer to the Prerequisite section above), simply run the script directly from this repo by running the following command at your Command Line prompt.  1) Go to Run (Win + R) and enter "cmd.exe".  2) At the command prompt, copy and paste the below pwsh command to run (you do not need Admin rights).
