@@ -38,16 +38,17 @@ function Get-AzModuleValidation() {
 # function to validate prerequisites before running the script.
 function Get-PSEnvironmentValidation() {
     # check to see if the valid PowerShell is installed...
-    if ($true -eu Get-PowerShellValidation) {
+    if (-not (Get-PowerShellValidation)) {
         Write-Host 'No valid PowerShell is found on your machine.   Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).' 
-        return $true;
+        return $false;
     }
     # check to see if Az Modules are installed...
-    if ($true -ne Get-AzModuleValidation) {
+    if (-not (Get-AzModuleValidation)) {
         Write-Host 'No Az modules are found on your machine.  Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
-        return $true;
+        return $false;
     }
-    return $false
+    # valid environment is found
+    return $true
 }
 
 ############################################################################## 
@@ -55,7 +56,7 @@ function Get-PSEnvironmentValidation() {
 ##############################################################################
 
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
-if (-not Get-PSEnvironmentValidation) {
+if (-not (Get-PSEnvironmentValidation)) {
     Write-Host 'No PowerShell 7+ or Az Modules found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
 }
