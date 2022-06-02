@@ -27,14 +27,14 @@ function Install-Powershell() {
             Write-Host 'The installation of Powershell 7 is not found on your machine. This will be installed...'
             
             try {
-                    # retrieves the latest powershell from the Microsoft repo.
-                    Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-                    Write-Host 'Please CLOSE and REOPEN the current CommandLine (or PowerShell) window, then run the script again if PowerShell 7.0 is successfully installed.'
-                    break;
+                # retrieves the latest powershell from the Microsoft repo.
+                Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
+                Write-Host 'Please CLOSE and REOPEN the current CommandLine (or PowerShell) window, then run the script again if PowerShell 7.0 is successfully installed.'
+                break;
             }
             catch {
-              # seems to be there was an error in calling REST. 
-              Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
+                # seems to be there was an error in calling REST. 
+                Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
             }
         }  
     }
