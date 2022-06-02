@@ -13,12 +13,13 @@ function Get-PSEnvironmentValidation() {
         Write-Host 'OS: Windows'
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
-    # if non-Windows is detected, the script continues even there is no PS7 detected, and you may encounter an error (work-in-progress).
     elseif ($PSVersionTable.OS -match 'Darwin') {
+        # if non-Windows is detected, the script continues even there is no PS7 detected, and you may encounter an error (work-in-progress).
         # on MacOS, there is no easy way to check if it has the latest PS is installed.
         Write-Host 'OS: MacOS'
         return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
-    } else {
+    } 
+    else {
         Write-Host 'OS: Linux or Unix'
         Write-Host 'Work-in-progress for other OS environment...'
     }
@@ -32,6 +33,14 @@ function Get-PSEnvironmentValidation() {
 if (-not (Get-PSEnvironmentValidation)) {
     Write-Host 'PowerShell 7 is not found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
+}
+
+ If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
+    Write-Host 'No Az modules are found on your machine.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    break;
+} 
+else {
+    Write-Host 'Az modules are found on your machine.  The quota priling will resume.'
 }
 
 Clear-AzContext -Force -ErrorAction SilentlyContinue
