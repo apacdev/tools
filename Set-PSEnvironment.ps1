@@ -114,3 +114,6 @@ function Set-PSEnvironment() {
 }
 
 Set-PSEnvironment
+
+Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the quota_profiler script as described in Usage section below.'
+
