@@ -6,41 +6,58 @@
 
 Clear-Host
 
-function Get-PSEnvironmentValidation() {
-    # check for OS environment
-    if ($PSVersionTable.OS -match 'Microsoft Windows') {
-        # if on Windows, easiest way to check PS7 installation is to peek into Windows Registry.
-        Write-Host 'OS: Windows'
+# function to if it's a valid OS and valid PowerShell version
+function Get-PowerShellValidation() {
+    # check for a supported OS environment
+    if ($IsWindows) {
+        Write-Host 'OS: Windows is detected.'
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
-    elseif ($PSVersionTable.OS -match 'Darwin') {
-        # if non-Windows is detected, the script continues even there is no PS7 detected, and you may encounter an error (work-in-progress).
-        # on MacOS, there is no easy way to check if it has the latest PS is installed.
-        Write-Host 'OS: MacOS'
+    elseif ($IsMacOS -or $IsMacOSX) {
+        Write-Host 'OS: MacOS or MacOSX is detected.'
         return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
     } 
-    else {
-        Write-Host 'OS: Linux or Unix'
-        Write-Host 'Work-in-progress for other OS environment...'
+    elseif {$IsLinux)
+        # Linux is detected.  It is work-in-process... 
+        Write-Host 'OS: Linux / Unix is detected (but the implementation is still work-in-progress).'
+        return $false
     }
+    else {
+        # No known OS is detected.
+        Write-Host 'OS: Unknown OS is detected.'
+        return $false
+    }
+}
+
+# function to check if all Azure Modules for PowerShell are installed.
+function Get-AzModuleValidation() {
+    # check to see if Az Modules are installed...
+    return ($null -ne (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) ? $true : $false
+}
+
+# function to validate prerequisites before running the script.
+function Get-PSEnvironmentValidation() {
+    # check to see if the valid PowerShell is installed...
+    if ($true -eu Get-PowerShellValidation) {
+        Write-Host 'No valid PowerShell is found on your machine.   Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).' 
+        return $true;
+    }
+    # check to see if Az Modules are installed...
+    if ($true -ne Get-AzModuleValidation) {
+        Write-Host 'No Az modules are found on your machine.  Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+        return $true;
+    }
+    return $false
 }
 
 ############################################################################## 
-# main (PowerShell 7 indded as tenary operator is used)
+# main (PowerShell 7 indded needed as tenary operator is used)
 ##############################################################################
 
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
-if (-not (Get-PSEnvironmentValidation)) {
-    Write-Host 'PowerShell 7 is not found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+if (-not Get-PSEnvironmentValidation) {
+    Write-Host 'No PowerShell 7+ or Az Modules found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
-}
-
- If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
-    Write-Host 'No Az modules are found on your machine.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
-    break;
-} 
-else {
-    Write-Host 'Az modules are found on your machine.  The quota priling will resume.'
 }
 
 Clear-AzContext -Force -ErrorAction SilentlyContinue
