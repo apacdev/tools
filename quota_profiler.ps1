@@ -7,7 +7,7 @@
 Clear-Host
 
 # function to if it's a valid OS and valid PowerShell version
-function Get-PowerShellValidation() {
+function Get-PSValidation() {
     # check for a supported OS environment
     if ($IsWindows) {
         Write-Host 'OS: Windows is detected.'
@@ -38,7 +38,7 @@ function Get-AzModuleValidation() {
 # function to validate prerequisites before running the script.
 function Get-PSEnvironmentValidation() {
     # check to see if the valid PowerShell is installed...
-    if (-not (Get-PowerShellValidation)) {
+    if (-not (Get-PSValidation)) {
         Write-Host 'No valid PowerShell is found on your machine.   Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).' 
         return $false;
     }
