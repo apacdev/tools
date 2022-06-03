@@ -11,23 +11,10 @@ Go to Run (Win + R) and enter "cmd.exe". At the command prompt, run the PowerShe
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
-**For MacOS Users**:
+**For Ubuntu and MacOS Users**:
 Please follow the instructions below to install Homebrew, PowerShell, and other Pre-requisites on your system.
 
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    brew install --cask powershell
-    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
-
-**For Linux (Ubuntu) Users**:
-Please follow the instructions below to install PowerShell and Pre-requisites on your system.
-
-    sudo apt-get update
-    sudo apt-get install -y wget apt-transport-https software-properties-common
-    wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-    sudo dpkg -i packages-microsoft-prod.deb
-    sudo apt-get update
-    sudo apt-get install -y powershell
-    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ms-apac-csu/tools/main/pre-requisites.sh)"
         
 [USAGE]
 
