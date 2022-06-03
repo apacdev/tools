@@ -18,13 +18,13 @@ function Get-PSValidation()
     elseif ($IsMacOS -or $IsMacOSX) 
     {
         Write-Host 'OS: MacOS or MacOSX is detected.'
-        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 72) ? $true : $false
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     } 
     elseif ($IsLinux)
     {
         # Linux is detected.  It is work-in-process... 
         Write-Host 'OS: Linux is detected.'
-        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 72) ? $true : $false
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     }
     else
     {
@@ -51,11 +51,9 @@ function Get-PSEnvironmentValidation() {
     }
     # check to see if Az Modules are installed...
     if (Get-AzModuleValidation) {
-        Write-Host 'Az modules are found on your machine.'
+        Write-Host 'Az Modules are found on your machine.'
         return $true;
-    }
-   
-    Write-Host 'Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    } 
     return $false
 }
 
@@ -66,8 +64,8 @@ function Get-PSEnvironmentValidation() {
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
 if (-not (Get-PSEnvironmentValidation)) 
 {
-    Write-Host 'No PowerShell 7+ or Az Modules found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
-    break;
+      Write-Host 'You may not have the latest PowerShell (7.2.4) or Az Modules installed on your system. Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+      break;
 }
 
 Clear-AzContext -Force -ErrorAction SilentlyContinue
