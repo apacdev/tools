@@ -20,6 +20,6 @@ Please follow the instructions below to install Homebrew, PowerShell, and other 
 
 Once your running environment is ready (refer to the Prerequisite section above), simply run the script directly from this repo by running the following command at your Command Line prompt.  1) Go to Run (Win + R) and enter "cmd.exe".  2) At the command prompt, copy and paste the below pwsh command to run (you do not need Admin rights).
 
-    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/quota_profiler.ps1'))"
+    pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Get-AzQuotaUtil.ps1'))"
 
 As an alternative, you can also fetch this quota_profiler.ps1 to your local drive and run the script with your PowerShell 7 (pwsh) or Command Line (cmd.exe). 
