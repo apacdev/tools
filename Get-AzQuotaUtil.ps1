@@ -18,13 +18,13 @@ function Get-PSValidation()
     elseif ($IsMacOS -or $IsMacOSX) 
     {
         Write-Host 'OS: MacOS or MacOSX is detected.'
-        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) ? $true : $false
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 72) ? $true : $false
     } 
     elseif ($IsLinux)
     {
         # Linux is detected.  It is work-in-process... 
         Write-Host 'OS: Linux is detected.'
-        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) ? $true : $false
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 72) ? $true : $false
     }
     else
     {
