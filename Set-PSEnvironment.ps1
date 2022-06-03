@@ -15,11 +15,11 @@ function Install-PowerShell()
     {
         if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')
         { 
-            Write-Host 'Powershell 7 is already installed on your Windows.' 
+            Write-Host 'Powershell 7+ is already installed on your Windows.' 
         } 
         else 
         {
-            Write-Host 'Powershell 7 is not found on your Windows. The installation will start...'    
+            Write-Host 'Powershell 7+ is not found on your Windows. The installation will start...'    
             try 
             {
                 # retrieves the latest powershell from the Microsoft repo.
@@ -43,12 +43,12 @@ function Install-AzModules()
           # command block to see if az modules are not found for your PowerShell 7, it fetches and install them.
           If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
           {
-               Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
+               Write-Host 'No Az Modules are found on your system.  They will be installed now. It may take a while...'
                Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
           } 
           else 
           { 
-            Write-Output 'Az modules are found...' 
+            Write-Output 'Az Modules are found...' 
           }
      }
 }
@@ -75,7 +75,7 @@ function Remove-AzureRM()
      }
      else 
      {
-        Write-host 'The legacy AzureRM Modules are not found on your system (which means good!).'
+        Write-host 'No legacy AzureRM Modules are found on your system (which means good!).'
      }
 }
 
