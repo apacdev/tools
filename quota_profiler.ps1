@@ -64,7 +64,7 @@ function Get-PSEnvironmentValidation() {
 ##############################################################################
 
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
-if (!Get-PSEnvironmentValidation) 
+if (-not (Get-PSEnvironmentValidation)) 
 {
     Write-Host 'No PowerShell 7+ or Az Modules found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
