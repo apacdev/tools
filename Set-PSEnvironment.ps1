@@ -8,8 +8,9 @@
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
 
-function Install-PowerShell() {
-
+# install the latest powershell on your system
+function Install-PowerShell() 
+{
     if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
     {
         if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')
@@ -57,7 +58,7 @@ function Remove-AzureRM()
 {
     if (-not $null -eq (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue))
     {
-        Write-Host 'AzureRM is found, and it is about to be removed. You need to give an administrator access if prompted.'
+        Write-Host 'The legacy AzureRM Modules are found, and they will be removed. You need to give an administrator access if prompted.'
         if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
         {
             if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
@@ -65,16 +66,16 @@ function Remove-AzureRM()
                 Write-Host "Uninstalling AzureRm Modules. This will take a while..."
                 Uninstall-AzureRM -PassThru
             } 
-            else 
-            {
-                Write-Host "Uninstalling AzureRm Modules. This will take a while..."
-                Uninstall-AzureRM -PassThru
-            }
+        }
+        else 
+        {
+            Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+            Uninstall-AzureRM -PassThru
         }
      }
      else 
      {
-        Write-host 'The legacy AzureRM is not found on your system (which means good!).'
+        Write-host 'The legacy AzureRM Modules are not found on your system (which means good!).'
      }
 }
 
