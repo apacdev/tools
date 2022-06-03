@@ -21,7 +21,7 @@ function Get-PSVersion() {
 function Install-LatestPS7() {
     if (Get-OSVersion -eq 'WINDOWS') {
 
-        if (Get-PSVersion)) {
+        if (Get-PSVersion) {
             Write-Host 'Powershell 7 is already installed on your Windows.' 
         } 
         else {
