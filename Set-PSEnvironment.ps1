@@ -21,9 +21,7 @@ function Get-PSVersion() {
 function Install-LatestPS7() {
     if (Get-OSVersion -eq 'WINDOWS') {
 
-        if (Get-PSVersion) {
-            Write-Host 'Powershell 7 is already installed on your Windows.' 
-        } 
+        if (Get-PSVersion) { Write-Host 'Powershell 7 is already installed on your Windows.' } 
         else {
         
             Write-Host 'Powershell 7 is not found on your Windows. The installation will start...'
@@ -46,7 +44,6 @@ function Install-LatestPS7() {
 function Install-AzModules() {
      # PowerShell 7 script block to install az modules on your system.
      pwsh -NoProfile -ExecutionPolicy ByPass -Command {
-     
           # command block to see if az modules are not found for your PowerShell 7, it fetches and install them.
           If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) {
                Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
@@ -75,7 +72,7 @@ function Remove-AzureRM() {
      }
 }
 
-# aggregate all fuction calls.
+# aggregates all fuction calls.
 function Set-PSEnvironment() {
 
     Install-LatestPS7
@@ -86,4 +83,3 @@ function Set-PSEnvironment() {
 Set-PSEnvironment
 
 Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the quota_profiler script as described in Usage section in README.'
-
