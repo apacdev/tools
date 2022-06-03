@@ -7,7 +7,7 @@ The script retrieves quota usage vs. approved across all subscriptions under you
 [PREREQUISITE]
 
 **For Windows Users**:
-1) Go to Run (Win + R) and enter "cmd.exe".  2) At the command prompt, run the PowerShell command below (you do not need Admin right). Note: You need to **run this again after PowerShell 7.0 is installed** for the script to continue with Pre-requisites.
+Go to Run (Win + R) and enter "cmd.exe". At the command prompt, run the PowerShell command below (you do not need Admin right). Note: You need to **close the current cmd Window and re-open it again once PowerShell 7.0 is installed** for the script to continue with Pre-requisites.
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
