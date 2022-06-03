@@ -7,22 +7,27 @@
 Clear-Host
 
 # function to if it's a valid OS and valid PowerShell version
-function Get-PSValidation() {
+function Get-PSValidation()
+{
     # check for a supported OS environment
-    if ($IsWindows) {
+    if ($IsWindows)
+    {
         Write-Host 'OS: Windows is detected.'
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
-    elseif ($IsMacOS -or $IsMacOSX) {
+    elseif ($IsMacOS -or $IsMacOSX) 
+    {
         Write-Host 'OS: MacOS or MacOSX is detected.'
-        return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) ? $true : $false
     } 
-    elseif ($IsLinux) {
+    elseif ($IsLinux)
+    {
         # Linux is detected.  It is work-in-process... 
-        Write-Host 'OS: Linux is detected (but the implementation is still work-in-progress).'
-        return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
+        Write-Host 'OS: Linux is detected.'
+        return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -ge 7.0) ? $true : $false
     }
-    else {
+    else
+    {
         # No known OS is detected.
         Write-Host 'OS: Unknown OS is detected.'
         return $false
@@ -30,7 +35,8 @@ function Get-PSValidation() {
 }
 
 # function to check if all Azure Modules for PowerShell are installed.
-function Get-AzModuleValidation() {
+function Get-AzModuleValidation() 
+{
     # check to see if Az Modules are installed...
     return ($null -ne (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue)) ? $true : $false
 }
@@ -38,17 +44,19 @@ function Get-AzModuleValidation() {
 # function to validate prerequisites before running the script.
 function Get-PSEnvironmentValidation() {
     # check to see if the valid PowerShell is installed...
-    if (-not (Get-PSValidation)) {
-        Write-Host 'No valid PowerShell is found on your machine.   Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).' 
-        return $false;
+    if (Get-PSValidation)
+    {
+        Write-Host 'valid PowerShell is found on your machine.' 
+        return $true;
     }
     # check to see if Az Modules are installed...
-    if (-not (Get-AzModuleValidation)) {
-        Write-Host 'No Az modules are found on your machine.  Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
-        return $false;
+    if (Get-AzModuleValidation) {
+        Write-Host 'Az modules are found on your machine.'
+        return $true;
     }
-    # valid environment is found
-    return $true
+   
+    Write-Host 'Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+    return $false
 }
 
 ############################################################################## 
@@ -56,7 +64,8 @@ function Get-PSEnvironmentValidation() {
 ##############################################################################
 
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
-if (-not (Get-PSEnvironmentValidation)) {
+if (!Get-PSEnvironmentValidation) 
+{
     Write-Host 'No PowerShell 7+ or Az Modules found on your system.  Please refer to the README of this repository and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
     break;
 }
@@ -70,12 +79,14 @@ $temppath = "$datapath/temp"
 $merged_filename = "all_subscriptions.csv"
 
 # retrives list of subscripotions and regions (where resources are deployed in).
-if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue)) {
+if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue))
+{
     Write-Output "There seems to be no subscriptions your Azure account. Nothing to process!"
     break;
 }
 
-if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique ))) {
+if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique )))
+{
     Write-Output "There seems to be no resources deployed in your Azure account. Nothing to process!"
     break;
 }
@@ -84,12 +95,14 @@ if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort
 $datetime = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')
 
 # see if the data path exists and create one if not.
-if (!(Test-Path -Path $datapath/temp)) { 
+if (!(Test-Path -Path $datapath/temp))
+{ 
     New-Item $datapath/temp -ItemType Directory
 }
 
 # delete merged csv file to ensure no data are appended to old ones.
-if (Test-Path -Path $datapath\$merged_filename -PathType Leaf) {
+if (Test-Path -Path $datapath\$merged_filename -PathType Leaf)
+{
     Remove-Item -Path $datapath\$merged_filename -Force
 }
 
@@ -100,8 +113,8 @@ $allsubscriptions = @()
 Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
 
 # loops through subscription list
-foreach($subscription in $subscriptions) {
-
+foreach($subscription in $subscriptions)
+{
     # may not needed but just to make sure that the resource provider is regigered in the subscriptions.
     Register-AzResourceProvider -ProviderNamespace Microsoft.Capacity -ConsentToPermissions $true -ErrorAction SilentlyContinue | Out-Null
 
@@ -110,17 +123,20 @@ foreach($subscription in $subscriptions) {
     $currentAzContext = Get-AzContext
     
     # loops through locations where the resources are deployed in
-    foreach ($location in $locations) {
-
+    foreach ($location in $locations) 
+    {
         Write-Output "Currently fetching resource data in $location / $subscription"
-        try {
+        try 
+        {
 
             # Get a list of Compute resources under the current subscription context
             $vmQuotas = Get-AzVMUsage -Location $location -ErrorAction SilentlyContinue
             $networkQuotas = Get-AzNetworkUsage -Location $location -ErrorAction SilentlyContinue
             $storageQuotas = Get-AzStorageUsage -Location $location -ErrorAction SilentlyContinue
 
-        } catch [System.SystemException] {
+        } 
+        catch [System.SystemException] 
+        {
 
             Write-Host 'An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.'
             Write-Host $_.ScriptStackTrace
@@ -128,8 +144,8 @@ foreach($subscription in $subscriptions) {
         }
         
         # Get usage data of each Compute resources 
-        foreach($vmQuota in $vmQuotas) {
-
+        foreach($vmQuota in $vmQuotas) 
+        {
             $usage  = ($vmQuota.Limit -gt 0) ? $($vmQuota.CurrentValue / $vmQuota.Limit) : 0
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
@@ -143,8 +159,8 @@ foreach($subscription in $subscriptions) {
         }
 
         # Get usage data of each network resources 
-        foreach ($networkQuota in $networkQuotas) {
-
+        foreach ($networkQuota in $networkQuotas)
+        {
             $usage = ($networkQuota.Limit -gt 0) ? $($networkQuota.CurrentValue / $networkQuota.Limit) : 0
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
@@ -158,8 +174,8 @@ foreach($subscription in $subscriptions) {
         }
 
         # Get usage data of each network resources 
-        foreach ($storageQuota in $storageQuotas) {
-
+        foreach ($storageQuota in $storageQuotas)
+        {
             $usage = ($storageQuotas.Limit -gt 0) ? $($storageQuotas.CurrentValue / $storageQuotas.Limit) : 0
             $object = New-Object -TypeName PSCustomObject
             $object | Add-Member -Name 'datetime_in_utc' -MemberType NoteProperty -Value $datetime
