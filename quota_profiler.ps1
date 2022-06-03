@@ -19,8 +19,8 @@ function Get-PSValidation() {
     } 
     elseif ($IsLinux) {
         # Linux is detected.  It is work-in-process... 
-        Write-Host 'OS: Linux / Unix is detected (but the implementation is still work-in-progress).'
-        return $false
+        Write-Host 'OS: Linux is detected (but the implementation is still work-in-progress).'
+        return ( -not [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString()) -lt 7.0) ? $true : $false
     }
     else {
         # No known OS is detected.
