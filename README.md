@@ -12,11 +12,27 @@ The script is tested on PowerShell 7.0 with Az Modules installed.  It's a quick 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
 **For MacOS Users**:
-Please have PowerShell Core installed before you proceed.  PowerShell Core installation requires Homebrew on your system.  Please refer to the following snippet to install Homebrew, PowerShell Core, and to run the Prerequisite script.
+Please have PowerShell Core installed before you proceed.  PowerShell Core installation requires Homebrew on your system.  Please refer to the following snippet to install Homebrew and PowerShell Core followed by Prerequisite script above.
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     brew install --cask powershell
     pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+
+**For Linux (Ubuntu) Users**:
+Please follow the instructions below to install PowerShell on your system and run the Prerequisite script above.
+
+    # Update the list of packages
+    sudo apt-get update
+    # Install pre-requisite packages.
+    sudo apt-get install -y wget apt-transport-https software-properties-common
+    # Download the Microsoft repository GPG keys
+    wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+    # Register the Microsoft repository GPG keys
+    sudo dpkg -i packages-microsoft-prod.deb
+    # Update the list of packages after we added packages.microsoft.com
+    sudo apt-get update
+    # Install PowerShell
+    sudo apt-get install -y powershell
 
 [USAGE]
 
