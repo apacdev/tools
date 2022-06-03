@@ -20,7 +20,6 @@ function Get-PSVersion() {
 
 function Install-LatestPS7() {
     if (Get-OSVersion -eq 'WINDOWS') {
-
         if (Get-PSVersion) { Write-Host 'Powershell 7 is already installed on your Windows.' } 
         else {
         
@@ -37,7 +36,9 @@ function Install-LatestPS7() {
                 Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
             }
         }  
-    } 
+    } else {
+        Write-Host 'Non-Windows'
+    }
 }
 
 # install az modules if it does not exist on your machines.
@@ -49,10 +50,7 @@ function Install-AzModules() {
                Write-Host 'Az modules are not found.  Installing the modules now. This may take a while...'
                Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
           } 
-          else {
-               # az modules are already found in the system.
-               Write-Output 'Az modules are found...'
-          }
+          else { Write-Output 'Az modules are found...' }
      }
 }
 
@@ -62,10 +60,15 @@ function Remove-AzureRM() {
      if (-not $null -eq (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue)) {
           # Prompt the user and remove AzureRM modules with Admin Rights.
           Write-Host 'AzureRM is found, and it is about to be removed. You need to give an administrator access if prompted.'
-          if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-               Write-Host "Uninstalling AzureRm Modules. This will take a while..."
-               Uninstall-AzureRM -PassThru
-          }
+          if (OSVersion -eq 'WINDOWS') {
+            if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+                Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+                Uninstall-AzureRM -PassThru
+            } else {
+                Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+                Uninstall-AzureRM -PassThru
+            }
+        }
      }
      else {
         Write-host 'The legacy AzureRM is not found on your system (which means good!).'
