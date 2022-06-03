@@ -39,9 +39,9 @@ elif [ $OS == "Linux" ]; then
         sudo apt-get install -y powershell
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     else 
-        echo 'Powershell is found on your system.'
+        echo 'Valid Powershell is found on your system.'
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     fi
 else
-    echo 'Unknown OS is detected.  This script only supports MacOS or Linux (Ubuntu).'
+    echo 'No known OS is detected.  This script only supports MacOS or Linux (Ubuntu).'
 fi
