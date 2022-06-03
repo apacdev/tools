@@ -71,7 +71,7 @@ if (-not (Get-PSEnvironmentValidation))
 }
 
 Clear-AzContext -Force -ErrorAction SilentlyContinue
-Connect-AzAccount -WarningAction SilentlyContinue | Out-Null # use -UseDeviceAuthentication option for Device Authentication for MFA. 
+Connect-AzAccount -WarningAction SilentlyContinue -UseDeviceAuthentication | Out-Null
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
