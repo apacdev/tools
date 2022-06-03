@@ -73,8 +73,8 @@ if (-not (Get-PSEnvironmentValidation))
 Clear-AzContext -Force -ErrorAction SilentlyContinue
 Connect-AzAccount -UseDeviceAuthentication
 
-# path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
-$datapath = "./quotautil"
+# path to the outfile (csv)
+$datapath = "$home/quotautil"
 $temppath = "$datapath/temp"
 $merged_filename = "all_subscriptions.csv"
 
