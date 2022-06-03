@@ -71,7 +71,7 @@ if (-not (Get-PSEnvironmentValidation))
 }
 
 Clear-AzContext -Force -ErrorAction SilentlyContinue
-Connect-AzAccount -WarningAction SilentlyContinue -UseDeviceAuthentication | Out-Null
+Connect-AzAccount -UseDeviceAuthentication
 
 # path to the outfile (csv) - if you are to use "relative location (e.g. c:\users\{your folder}\)"
 $datapath = "./quotautil"
