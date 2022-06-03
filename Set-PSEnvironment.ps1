@@ -23,7 +23,7 @@ function Install-PowerShell() {
             {
                 # retrieves the latest powershell from the Microsoft repo.
                 Invoke-Expression "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -EnablePSRemoting -AddExplorerContextMenu"
-                Write-Host 'Please CLOSE and REOPEN the current CommandLine (or PowerShell) window, then run the script again if PowerShell 7.0 is successfully installed.'
+                Write-Host 'Please CLOSE and REOPEN the current CommandLine (or PowerShell) window, and run the script again once PowerShell 7+ is successfully installed.'
                 break;
             }
             catch 
@@ -80,7 +80,6 @@ function Remove-AzureRM()
 
 # aggregates all fuction calls.
 function Set-PSEnvironment() {
-
     Install-PowerShell
     Install-AzModules
     Remove-AzureRM
