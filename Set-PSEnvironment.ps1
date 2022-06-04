@@ -9,88 +9,152 @@
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
 
-function Install-PowerShell() 
+function IsPowerShell7() 
 {
-    if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')
+    if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore') 
     { 
-        Write-Host 'Powershell 7+ is already installed on your Windows.' 
+        return $true
     } 
-    else 
-    {
-        Write-Host 'Powershell 7+ is not found on your Windows. The installation will start...'    
-        try 
-        {
-            # retrieves the latest powershell from the Microsoft repo.
-            powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
-        }
-        catch 
-        {
-            # there was an error in calling REST. 
-            Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
-        }
-    }  
-}
-
-# install az modules for powershell 7 if it does not exist on your machines.
-function Install-AzModules() 
-{
-  pwsh -NoProfile -ExecutionPolicy ByPass -Command 
-  {
-    If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
-    {
-      Write-Host 'No Az Modules are found on your system.  They will be installed now. It may take a while...'
-      Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
-    } 
-    else 
+    else
     { 
-      Write-Output 'Az Modules are found...' 
+        Write-Host 'No PowerShell 7+ is found on your system.'
+        return $false 
     }
- }
 }
 
-# removes legacy AzureRM components to avoid conflicts with Az Modules.
-function Remove-AzureRM() 
+function IsWindows() 
 {
-    if (-not $null -eq (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue))
+    if (([System.Environment]::OSVersion.Platform) -match 'Win32NT') 
+    { 
+        return $true 
+    } 
+    else 
+    { 
+        return $false 
+    }
+}
+
+function IsAzModulesFound() 
+{
+    If (-not ($null) -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
+    { 
+        return $true 
+    } 
+    else 
+    { 
+        return $false 
+    }
+}
+
+function IsAzureRmModulesFound() 
+{
+    if ($null -ne (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue)) 
+    { 
+        return $true 
+    } 
+    else
     {
-        Write-Host 'The legacy AzureRM Modules are found, and they will be removed. You need to give an administrator access if prompted.'
-        if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
+        return $false 
+    }
+}
+
+function Install-AzModules()
+{
+    Write-Host 'Installing Az Modules on your OS now. It may take a while...'
+    if (IsWindows)
+    {
+        if (IsPowerShell7) 
         {
-            if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-            {
-                Write-Host "Uninstalling AzureRm Modules. This will take a while..."
-                Uninstall-AzureRM -PassThru
-            } 
+            Start-Process pwsh.exe '-c', { 
+            If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
+            { 
+                Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru } -Verb RunAs -Wait
+            }             
         }
-        else 
+    }
+    else
+    {
+        Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
+    }
+}
+
+function Install-PowerShell7()
+{
+    Write-Host 'Installing the latest PowerShell on your system.'
+    try 
+    {
+        if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
         {
-            Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+            Invoke-Expression  "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -Quiet -AddExplorerContextMenu  -EnablePSRemoting"
+        }
+        else
+        {
+            Invoke-Expression  "& { $(Invoke-RestMethod https://aka.ms/install-powershell.ps1) } -UseMSI -AddExplorerContextMenu  -EnablePSRemoting"
+        }
+    } 
+    catch
+    {
+        Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
+    }
+}
+
+function Uninstall-AzureRmModules() 
+{
+    Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+    if (IsWindows)
+    {
+        if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+        {
             Uninstall-AzureRM -PassThru
         }
-     }
-     else 
-     {
-        Write-host 'No legacy AzureRM Modules are found on your system (which means good!).'
-     }
+        else
+        {
+            Invoke-Command -ScriptBlock { Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoExit Uninstall-AzureRM -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'" }
+        }
+    }
+    else
+    {
+        Uninstall-AzureRM -PassThru
+        Write-Host 'The legacy AzureRM Modules are removed from your system.'
+    }
 }
 
-# aggregates all fuction calls.
 function Set-PSEnvironment()
 {
-    Install-PowerShell
-    Install-AzModules
-    Remove-AzureRM
-    Start-Process -Wait "cmd" -ArgumentList '/k', {
-      pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+    if (IsWindows) 
+    {
+        if (-not (IsPowerShell7))    { Install-PowerShell7      } 
+        if (-not (IsAzModulesFound)) { Install-AzModules        }
+        if (IsAzureRmModulesFound)   { Uninstall-AzureRmModules }
+    } 
+    else 
+    {
+        if (-not (IsAzModulesFound)) { Install-AzModules        }
+        if (IsAzureRmModulesFound)   { Uninstall-AzureRmModules }
     }
-    Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
 
-if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
+function Get-PSEnvironment()
 {
-    Set-PSEnvironment
+    if (IsWindows) 
+    {
+        if ((IsPowerShell7))                { return $true } 
+        if ((IsAzModulesFound))             { return $true }
+        if (-not (IsAzureRmModulesFound))   { return $true }
+    } 
+    else 
+    {
+        if ((IsAzModulesFound))             { return $true }
+        if (-not (IsAzureRmModulesFound))   { return $true }
+    }
 }
-else 
+
+Clear-Host
+Set-PSEnvironment
+
+if (Get-PSEnvironment) 
 {
-    Write-Host 'This Pre-requisite script is written for Windows only.  For other OS like MacOS or Linux, please refer to "For MacOS or Linux Users" section of the README'
+    Write-Host ''
+    Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
+    Write-Host ''
 }
