@@ -61,22 +61,22 @@ function IsAzureRmModulesFound()
 function Install-AzModules()
 {
     Write-Host 'Installing Az Modules on your OS now. It may take a while...'
-    
     if (IsWindows)
     {
         if (IsPowerShell7) 
         {
             Start-Process pwsh.exe '-c', { 
-            If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
-            { 
-                Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-                Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru } -Verb RunAs -Wait
-            }             
+                If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
+                {
+                    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+                    Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru 
+                }
+            } -Wait            
         }
     }
     else
     {
-        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
     }
 }
@@ -137,6 +137,10 @@ function Set-PSEnvironment()
     }
 }
 
+Clear-Host
+
+Set-PSEnvironment
+
 function Get-PSEnvironment()
 {
     if (IsWindows) 
@@ -152,10 +156,9 @@ function Get-PSEnvironment()
     }
 }
 
-Clear-Host
-Set-PSEnvironment
-
 if (Get-PSEnvironment) 
 {
+    Write-Host ''
     Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
+    Write-Host ''
 }
