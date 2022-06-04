@@ -144,9 +144,9 @@ function Get-PSEnvironment()
 {
     if (IsWindows) 
     {
-        if ((IsPowerShell7))                { return $true } 
-        if ((IsAzModulesFound))             { return $true }
-        if (-not (IsAzureRmModulesFound))   { return $true }
+        if ((IsPowerShell7))                { '[OK] PowerShell 7+ is found on your system.'           ; return $true } 
+        if ((IsAzModulesFound))             { '[OK] Az Modules are found on your system.'             ; return $true }
+        if (-not (IsAzureRmModulesFound))   { '[OK] No conflict with AzureRm is found on your system.'; return $true }
     } 
     else 
     {
