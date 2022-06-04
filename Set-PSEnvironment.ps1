@@ -154,7 +154,5 @@ Set-PSEnvironment
 
 if (Get-PSEnvironment) 
 {
-    Write-Host ''
     Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
-    Write-Host ''
 }
