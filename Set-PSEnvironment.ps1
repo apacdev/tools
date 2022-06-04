@@ -61,6 +61,7 @@ function IsAzureRmModulesFound()
 function Install-AzModules()
 {
     Write-Host 'Installing Az Modules on your OS now. It may take a while...'
+    
     if (IsWindows)
     {
         if (IsPowerShell7) 
@@ -68,12 +69,14 @@ function Install-AzModules()
             Start-Process pwsh.exe '-c', { 
             If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
             { 
+                Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
                 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru } -Verb RunAs -Wait
             }             
         }
     }
     else
     {
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
     }
 }
