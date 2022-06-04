@@ -1,4 +1,4 @@
-   
+
 # THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 # ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -34,7 +34,8 @@ function Install-PowerShell()
 # install az modules for powershell 7 if it does not exist on your machines.
 function Install-AzModules() 
 {
-  $command = {
+  pwsh -NoProfile -ExecutionPolicy ByPass -Command 
+  {
     If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
     {
       Write-Host 'No Az Modules are found on your system.  They will be installed now. It may take a while...'
@@ -45,7 +46,6 @@ function Install-AzModules()
       Write-Output 'Az Modules are found...' 
     }
  }
-  pwsh -NoProfile -PassThru -ExecutionPolicy ByPass -Command $command
 }
 
 # removes legacy AzureRM components to avoid conflicts with Az Modules.
@@ -85,12 +85,9 @@ function Set-PSEnvironment()
 if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
 {
     Set-PSEnvironment
-
-    $command = {
-      pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+    Start-Process -Wait "cmd" -ArgumentList '/k', {
+      powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     }
-    
-    Start-Process -Wait "cmd" -ArgumentList '/c', $command 
     Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
 else 
