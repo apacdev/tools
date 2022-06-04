@@ -11,7 +11,6 @@
 
 function Install-PowerShell() 
 {
-
     if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')
     { 
         Write-Host 'Powershell 7+ is already installed on your Windows.' 
@@ -82,6 +81,7 @@ function Set-PSEnvironment()
     Install-AzModules
     Remove-AzureRM
 }
+
 if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
 {
     Set-PSEnvironment
@@ -89,7 +89,7 @@ if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
     $command = {
       pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     }
-
+    
     Start-Process -Wait "cmd" -ArgumentList '/c', $command 
     Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
