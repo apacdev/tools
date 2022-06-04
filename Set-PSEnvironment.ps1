@@ -89,7 +89,6 @@ function Set-PSEnvironment()
 if (([System.Environment]::OSVersion.Platform) -match 'Win32NT')
 {
     Set-PSEnvironment
-
 }
 else 
 {
