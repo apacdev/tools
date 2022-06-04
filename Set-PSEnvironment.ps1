@@ -150,12 +150,18 @@ function Get-PSEnvironment()
     } 
     else 
     {
-        if ((IsAzModulesFound))             { return $true }
-        if (-not (IsAzureRmModulesFound))   { return $true }
+        if ((IsAzModulesFound))             { '[OK] Az Modules are found on your system.'             ; return $true }
+        if (-not (IsAzureRmModulesFound))   { '[OK] No conflict with AzureRm is found on your system.'; return $true }
     }
+
+    return $false
 }
 
 if (Get-PSEnvironment) 
 {
     Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
+}
+else
+{
+    Write-Host 'Your seetings do not seem to meet the Rerequisites!'
 }
