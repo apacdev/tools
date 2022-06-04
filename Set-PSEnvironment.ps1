@@ -81,7 +81,7 @@ function Set-PSEnvironment()
     Install-AzModules
     Remove-AzureRM
     Start-Process -Wait "cmd" -ArgumentList '/k', {
-      powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
+      pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     }
     Write-Host 'The setup of Prerequisites is now completed.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
