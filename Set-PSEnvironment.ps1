@@ -142,23 +142,26 @@ Set-PSEnvironment
 
 function Get-PSEnvironment()
 {
+    $flag = $false;
     if (IsWindows) 
     {
-        if ((IsPowerShell7))                { '[OK] PowerShell 7+ is found on your system.'           ; return $true } 
-        if ((IsAzModulesFound))             { '[OK] Az Modules are found on your system.'             ; return $true }
-        if (-not (IsAzureRmModulesFound))   { '[OK] No conflict with AzureRm is found on your system.'; return $true }
+
+        if ((IsPowerShell7))                { Write-Host '[OK] PowerShell 7+ is found on your system.'             ; $flag = $true } 
+        if ((IsAzModulesFound))             { Write-Host '[OK] Az Modules are found on your system.'               ; $flag = $true }
+        if (-not (IsAzureRmModulesFound))   { Write-Host '[OK] No conflict with AzureRm is found on your system.'  ; $flag = $true }
     } 
     else 
     {
-        if ((IsAzModulesFound))             { '[OK] Az Modules are found on your system.'             ; return $true }
-        if (-not (IsAzureRmModulesFound))   { '[OK] No conflict with AzureRm is found on your system.'; return $true }
+        if ((IsAzModulesFound))             { Write-Host '[OK] Az Modules are found on your system.'               ; $flag = $true }
+        if (-not (IsAzureRmModulesFound))   { Write-Host '[OK] No conflict with AzureRm is found on your system.'  ; $flag = $true }
     }
 
-    return $false
+    return $flag
 }
 
 if (Get-PSEnvironment) 
 {
+    Write-Host ''
     Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
 else
