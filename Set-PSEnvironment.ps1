@@ -48,7 +48,7 @@ function IsAzModulesFound()
 
 function IsAzureRmModulesFound() 
 {
-    if ($null -ne (Get-InstalledModule -Name AzureRM -ErrorAction SilentlyContinue)) 
+    if ($null -ne (Get-InstalledModule -Name AzureRm -ErrorAction SilentlyContinue)) 
     { 
         return $true 
     } 
@@ -68,6 +68,7 @@ function Install-AzModules()
             Start-Process pwsh.exe '-c', { 
                 If ($null -eq (Get-InstalledModule -Name Az -ErrorAction SilentlyContinue))
                 {
+                    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
                     Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru 
                 }
             } -Wait            
@@ -75,6 +76,7 @@ function Install-AzModules()
     }
     else
     {
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
         Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -AllowClobber -Force -SkipPublisherCheck -PassThru
     }
 }
@@ -101,22 +103,21 @@ function Install-PowerShell7()
 
 function Uninstall-AzureRmModules() 
 {
-    Write-Host "Uninstalling AzureRm Modules. This will take a while..."
+    Write-Host "Uninstalling AzureRm Modules (from PowerShell Core only). This will take a while..."
     if (IsWindows)
     {
         if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
         {
-            Uninstall-AzureRM -PassThru
+            Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRm Modules are removed from your system.'
         }
         else
         {
-            Invoke-Command -ScriptBlock { Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoExit Uninstall-AzureRM -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'" }
+            Invoke-Command -ScriptBlock { Start-Process pwsh.exe '-c', { Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'} -Verb RunAs -Wait }
         }
     }
     else
     {
-        Uninstall-AzureRM -PassThru
-        Write-Host 'The legacy AzureRM Modules are removed from your system.'
+        Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'
     }
 }
 
