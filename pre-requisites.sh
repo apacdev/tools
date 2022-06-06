@@ -6,31 +6,32 @@
 
 #!/bin/bash
 
+clear
 OS="$(uname)"
 
 if [ $OS == "Darwin" ]; then
     if [ -z "$(which pwsh)" ]; then 
-        echo 'PowerShell is not installed on your system.'
+        echo '[INFO] No valid PowerShell is found on your system. It will be installed.'
         if [ -z "$(which brew)" ]; then
-            echo 'HomeBrew is not installed on your system.  It is required to install PowerShell.' 
-            echo 'Installing HomeBrew...'
+            echo '[INFO] Homebrew is not installed on your system.  It is required to install PowerShell.' 
+            echo '[INFO] Installing Homebrew now...'
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            echo 'Installing PowerShell...'
+            echo '[INFO] Installing PowerShell now...'
             brew install --cask powershell
             pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
         else
-            echo 'HomeBrew is installed on your system.'
-            echo 'Installing PowerShell...'
+            echo '[ OK ] HomeBrew is installed on your system.'
+            echo '[INFO] Installing PowerShell now...'
             brew install --cask powershell
             pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
         fi
     else
-        echo 'PowerShell is found on your system.'
+        echo '[ OK ] Valid owerShell is found on your system.'
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     fi
 elif [ $OS == "Linux" ]; then
     if [ -z "$(which pwsh)" ]; then
-        echo 'PowerShell is not installed on your system.'
+        echo '[ NO ] No valid PowerShell is found on your system.'
         sudo apt-get update
         sudo apt-get install -y wget apt-transport-https software-properties-common
         wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
@@ -39,9 +40,9 @@ elif [ $OS == "Linux" ]; then
         sudo apt-get install -y powershell
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     else 
-        echo 'Valid Powershell is found on your system.'
+        echo '[ OK ] Valid Powershell is found on your system.'
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     fi
 else
-    echo 'No known OS is detected.  This script only supports MacOS or Linux (Ubuntu).'
+    echo '[ NO ] No known OS is found on your system.  This script only supports MacOS or Linux (Ubuntu).'
 fi
