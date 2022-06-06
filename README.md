@@ -11,7 +11,7 @@ Go to Run (Win + R) and enter "cmd.exe". At the command prompt, run the PowerShe
 
     powershell -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
 
-**For Ubuntu and MacOS Users**:
+**For Ubuntu (20.04 LTS) and MacOS Users**:
 Please follow the instructions below to install Homebrew, PowerShell, and other Pre-requisites on your system.
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ms-apac-csu/tools/main/pre-requisites.sh)"
