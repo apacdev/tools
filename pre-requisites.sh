@@ -28,6 +28,7 @@ function cecho() {
     tput sgr0;
 }
 
+clear
 OS="$(uname)"
 
 if [ $OS == "Darwin" ]; then
