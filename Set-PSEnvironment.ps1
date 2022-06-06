@@ -19,7 +19,7 @@ function IsPowerShell7()
     } 
     else
     { 
-        Write-Host '[ NO ] No PowerShell 7+ is found on your system.'
+        Write-Host '[ NO ] No PowerShell 7+ is found on your system.' -ForegroundColor Red
         return $false 
     }
 }
@@ -62,7 +62,7 @@ function IsAzureRmModulesFound()
 
 function Install-AzModules()
 {
-    Write-Host '[INFO] Installing Az Modules on your OS now. It may take a while...'
+    Write-Host '[INFO] Installing Az Modules on your OS now. It may take a while...' -ForegroundColor Blue
     if (IsWindows)
     {
         if (IsPowerShell7) 
@@ -83,7 +83,7 @@ function Install-AzModules()
 
 function Install-PowerShell7()
 {
-    Write-Host '[INFO] Installing the latest PowerShell on your system now...'
+    Write-Host '[INFO] Installing the latest PowerShell on your system now...' -ForegroundColor Blue
     try 
     {
         if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
@@ -97,27 +97,27 @@ function Install-PowerShell7()
     } 
     catch
     {
-        Write-Host '[ NO] An error occurred during pulling the data from the remote server.  Please try again later...'
+        Write-Host '[ NO ] An error occurred during pulling the data from the remote server.  Please try again later...' -ForegroundColor Red
     }
 }
 
 function Uninstall-AzureRmModules() 
 {
-    Write-Host "[INFO] Uninstalling AzureRm Modules now... This will take a while..."
+    Write-Host "[INFO] Uninstalling AzureRm Modules now... This will take a while..." -ForegroundColor Blue
     if (IsWindows)
     {
         if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
         {
-            Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRm Modules are removed from your system.'
+            Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRm Modules are removed from your system.' -ForegroundColor Blue
         }
         else
         {
-            Invoke-Command -ScriptBlock { Start-Process pwsh.exe '-c', { Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'} -Verb RunAs -Wait }
+            Invoke-Command -ScriptBlock { Start-Process pwsh.exe '-c', { Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRM Modules are removed from your system.' -ForegroundColor Blue } -Verb RunAs -Wait }
         }
     }
     else
     {
-        Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRM Modules are removed from your system.'
+        Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRM Modules are removed from your system.' -ForegroundColor Blue
     }
 }
 
@@ -144,14 +144,14 @@ function Get-PSEnvironment()
     if (IsWindows) 
     {
 
-        if ((IsPowerShell7))                { Write-Host '[OK] PowerShell 7+ is found on your system.'             ; $flag = $true } 
-        if ((IsAzModulesFound))             { Write-Host '[OK] Az Modules are found on your system.'               ; $flag = $true }
-        if (-not (IsAzureRmModulesFound))   { Write-Host '[OK] No conflict with AzureRm is found on your system.'  ; $flag = $true }
+        if ((IsPowerShell7))                { Write-Host '[ OK ] PowerShell 7+ is found on your system.' -ForegroundColor Green            ; $flag = $true } 
+        if ((IsAzModulesFound))             { Write-Host '[ OK ] Az Modules are found on your system.' -ForegroundColor Green              ; $flag = $true }
+        if (-not (IsAzureRmModulesFound))   { Write-Host '[ OK ] No conflict with AzureRm is found on your system.' -ForegroundColor Green ; $flag = $true }
     } 
     else 
     {
-        if ((IsAzModulesFound))             { Write-Host '[OK] Az Modules are found on your system.'               ; $flag = $true }
-        if (-not (IsAzureRmModulesFound))   { Write-Host '[OK] No conflict with AzureRm is found on your system.'  ; $flag = $true }
+        if ((IsAzModulesFound))             { Write-Host '[ OK ] Az Modules are found on your system.' -ForegroundColor Green                ; $flag = $true }
+        if (-not (IsAzureRmModulesFound))   { Write-Host '[ OK ] No conflict with AzureRm is found on your system.' -ForegroundColor Green   ; $flag = $true }
     }
 
     return $flag
@@ -160,9 +160,9 @@ function Get-PSEnvironment()
 if (Get-PSEnvironment) 
 {
     Write-Host ''
-    Write-Host '[INFO] Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
+    Write-Host '[INFO] Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.' -ForegroundColor Blue 
 }
 else
 {
-    Write-Host '[INFO] Your seetings do not seem to meet the Rerequisites.  Please make sure that you go through Pre-Requisite Second of the REAMDE !!'
+    Write-Host '[INFO] Your seetings do not seem to meet the Rerequisites.  Please make sure that you go through Pre-Requisite Second of the REAMDE !!' -ForegroundColor Red 
 }
