@@ -1,10 +1,5 @@
-# THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-# ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-# PARTICULAR PURPOSE.
-# CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
-
 #!/bin/bash
+OS="$(uname)"
 
 function cecho() {
     local exp=$1;
@@ -28,9 +23,6 @@ function cecho() {
     tput sgr0;
 }
 
-clear
-OS="$(uname)"
-
 if [ $OS == "Darwin" ]; then
     if [ -z "$(which pwsh)" ]; then 
         cecho '[INFO] No valid PowerShell is found on your system. It will be installed.' blue
@@ -53,7 +45,6 @@ if [ $OS == "Darwin" ]; then
         cecho '[ OK ] Valid owerShell is found on your system.' green
         pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Set-PSEnvironment.ps1'))"
     fi
-    
 elif [ $OS == "Linux" ]; then
     if [ -z "$(which pwsh)" ]; then
         cecho '[ NO ] No valid PowerShell is found on your system.' red
