@@ -10,18 +10,18 @@ function Get-PSValidation()
     # check for a supported OS environment
     if ($IsWindows)
     {
-        Write-Host '[INFO] Windows is found on your system.' -ForegroundColor green
+        Write-Host '[INFO] Windows is found on your system.' -ForegroundColor blue
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
     elseif ($IsMacOS -or $IsMacOSX) 
     {
-        Write-Host '[INFO] MacOS or MacOSX is found on your system.' -ForegroundColor green
+        Write-Host '[INFO] MacOS or MacOSX is found on your system.' -ForegroundColor blue
         return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     } 
     elseif ($IsLinux)
     {
         # Linux is detected.  It is work-in-process... 
-        Write-Host '[INFO] Linux is found on your system.' -ForegroundColor green
+        Write-Host '[INFO] Linux is found on your system.' -ForegroundColor blue
         return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     }
     else
@@ -44,12 +44,12 @@ function Get-PSEnvironmentValidation() {
     # check to see if the valid PowerShell is installed...
     if (Get-PSValidation)
     {
-        Write-Host '[OK] Valid PowerShell is found on your system.' -ForegroundColor green
+        Write-Host '[ OK ] Valid PowerShell is found on your system.' -ForegroundColor green
         return $true;
     }
     # check to see if Az Modules are installed...
     if (Get-AzModuleValidation) {
-        Write-Host '[OK] Az Modules are found on your system.' -ForegroundColor green
+        Write-Host '[ OK ] Az Modules are found on your system.' -ForegroundColor green
         return $true;
     } 
     return $false
@@ -77,13 +77,13 @@ $merged_filename = "all_subscriptions.csv"
 # retrives list of subscripotions and regions (where resources are deployed in).
 if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue))
 {
-    Write-Host "[INFO] There seems to be no subscriptions your Azure account. Nothing to process!" -ForegroundColor green
+    Write-Host "[INFO] There seems to be no subscriptions your Azure account. Nothing to process!" -ForegroundColor blue
     break;
 }
 
 if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique )))
 {
-    Write-Host "[INFO] There seems to be no resources deployed in your Azure account. Nothing to process!" -ForegroundColor green
+    Write-Host "[INFO] There seems to be no resources deployed in your Azure account. Nothing to process!" -ForegroundColor blue
     break;
 }
 
@@ -121,7 +121,7 @@ foreach($subscription in $subscriptions)
     # loops through locations where the resources are deployed in
     foreach ($location in $locations) 
     {
-        Write-Output "[INFO] Currently fetching resource data in $location / $subscription" -ForegroundColor green
+        Write-Host "[INFO] Currently fetching resource data in $location / $subscription" -ForegroundColor Gray
         try 
         {
 
