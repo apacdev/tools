@@ -25,7 +25,7 @@ function cecho() {
 
 if [ $OS == "Darwin" ]; then
     if [ -z "$(which pwsh)" ]; then 
-        cecho '[INFO] No valid PowerShell is found on your system. It will be installed.' blue
+        cecho '[INFO] No PowerShell (Core) is found on your system. It will be installed.' blue
         if [ -z "$(which brew)" ]; then
             cecho '[ NO ] No Homebrew is found on your system.  It is required to install PowerShell.' red
             cecho '[INFO] Installing Homebrew now...' blue
