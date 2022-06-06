@@ -9,8 +9,6 @@
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
 
-Clear-Host
-
 function IsPowerShell7() 
 {
     if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore') 
@@ -125,6 +123,7 @@ function Set-PSEnvironment()
 {
     if (IsWindows) 
     {
+        Clear-Host
         if (-not (IsPowerShell7))    { Install-PowerShell7      } 
         if (-not (IsAzModulesFound)) { Install-AzModules        }
         if (IsAzureRmModulesFound)   { Uninstall-AzureRmModules }
