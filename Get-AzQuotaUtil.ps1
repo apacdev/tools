@@ -4,32 +4,30 @@
 # PARTICULAR PURPOSE.
 # CUSTOMER SUCCESS UNIT, MICROSOFT CORP. APAC.
 
-Clear-Host
-
 # function to if it's a valid OS and valid PowerShell version
 function Get-PSValidation()
 {
     # check for a supported OS environment
     if ($IsWindows)
     {
-        Write-Host 'OS: Windows is detected.'
+        Write-Host '[INFO] Windows is found on your system.' -ForegroundColor green
         return ($true -eq (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore')) ? $true : $false
     }
     elseif ($IsMacOS -or $IsMacOSX) 
     {
-        Write-Host 'OS: MacOS or MacOSX is detected.'
+        Write-Host '[INFO] MacOS or MacOSX is found on your system.' -ForegroundColor green
         return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     } 
     elseif ($IsLinux)
     {
         # Linux is detected.  It is work-in-process... 
-        Write-Host 'OS: Linux is detected.'
+        Write-Host '[INFO] Linux is found on your system.' -ForegroundColor green
         return ( [int] ($PSVersionTable.PSVersion.Major.ToString() + $PSVersionTable.PSVersion.Minor.ToString() + $PSVersionTable.PSVersion.Patch.ToString()) -ge 724) ? $true : $false
     }
     else
     {
         # No known OS is detected.
-        Write-Host 'OS: Unknown OS is detected.'
+        Write-Host '[ NO ] No known OS is found on your system.' -ForegroundColor red
         return $false
     }
 }
@@ -46,12 +44,12 @@ function Get-PSEnvironmentValidation() {
     # check to see if the valid PowerShell is installed...
     if (Get-PSValidation)
     {
-        Write-Host 'valid PowerShell is found on your machine.' 
+        Write-Host '[OK] Valid PowerShell is found on your system.' -ForegroundColor green
         return $true;
     }
     # check to see if Az Modules are installed...
     if (Get-AzModuleValidation) {
-        Write-Host 'Az Modules are found on your machine.'
+        Write-Host '[OK] Az Modules are found on your system.' -ForegroundColor green
         return $true;
     } 
     return $false
@@ -64,7 +62,7 @@ function Get-PSEnvironmentValidation() {
 # ensure that the right version of powershell is ready on the system (it works properly only on Windows now).
 if (-not (Get-PSEnvironmentValidation)) 
 {
-      Write-Host 'You may not have the latest PowerShell (7.2.4) or Az Modules installed on your system. Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).'
+      Write-Host '[ NO ] You may not have the latest PowerShell (7.2.4) or Az Modules installed on your system. Please refer to the README of this repository, and run Prerequisite section to set your running environment first (https://github.com/ms-apac-csu/tools).' - ForegroundColor red
       break;
 }
 
@@ -79,13 +77,13 @@ $merged_filename = "all_subscriptions.csv"
 # retrives list of subscripotions and regions (where resources are deployed in).
 if ($null -eq ($subscriptions = Get-AzSubscription -ErrorAction SilentlyContinue))
 {
-    Write-Output "There seems to be no subscriptions your Azure account. Nothing to process!"
+    Write-Host "[INFO] There seems to be no subscriptions your Azure account. Nothing to process!" -ForegroundColor green
     break;
 }
 
 if ($null -eq ($locations =(Get-AzResource | ForEach-Object {$_.Location} | Sort-Object |  Get-Unique )))
 {
-    Write-Output "There seems to be no resources deployed in your Azure account. Nothing to process!"
+    Write-Host "[INFO] There seems to be no resources deployed in your Azure account. Nothing to process!" -ForegroundColor green
     break;
 }
 
@@ -108,7 +106,7 @@ if (Test-Path -Path $datapath\$merged_filename -PathType Leaf)
 $objectarray = @()
 $allsubscriptions = @()
 
-Write-Output "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
+Write-Host "`n===== There are $($subscriptions.Count) subscription(s) ======`n"
 
 # loops through subscription list
 foreach($subscription in $subscriptions)
@@ -123,7 +121,7 @@ foreach($subscription in $subscriptions)
     # loops through locations where the resources are deployed in
     foreach ($location in $locations) 
     {
-        Write-Output "Currently fetching resource data in $location / $subscription"
+        Write-Output "[INFO] Currently fetching resource data in $location / $subscription" -ForegroundColor green
         try 
         {
 
@@ -136,7 +134,7 @@ foreach($subscription in $subscriptions)
         catch [System.SystemException] 
         {
 
-            Write-Host 'An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.'
+            Write-Host '[ NO ] An error occurred while fetching the usage data from Azure. Please try again later. Exiting the current process.' -ForegroundColor red
             Write-Host $_.ScriptStackTrace
             break;
         }
@@ -203,5 +201,5 @@ Compress-Archive -Path "$temppath/*.csv" -CompressionLevel "Fastest" -Destinatio
 Remove-Item -Path "$temppath/" -Recurse -Force
 
 # now the job is done...!
-Write-Output "`n===== Profiling completed =====" 
+Write-Host "`n===== Profiling completed =====" 
 Get-ChildItem -Path $datapath
