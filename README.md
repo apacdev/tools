@@ -31,4 +31,4 @@ Once your running environment is ready (refer to the Prerequisite section above)
 
     pwsh -NoProfile -ExecutionPolicy ByPass -Command "Invoke-Expression((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ms-apac-csu/tools/main/Get-AzQuotaUtil.ps1'))"
 
-As an alternative, you can also fetch this quota_profiler.ps1 to your local drive and run the script with your PowerShell 7 (pwsh) or Command Line (cmd.exe).
+As an alternative, you can also fetch `Get-AzQuotaUtil.ps1` to your local drive from this git repo [Get-AzQuotaUtil.ps1](Get-AzQuotaUtil.ps1) and run the script with your PowerShell 7 (pwsh) or Command Line (cmd.exe).
