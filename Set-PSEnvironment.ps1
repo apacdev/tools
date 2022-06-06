@@ -9,6 +9,8 @@
 # a quick and dirty way to check and setup running environment.
 ##########################################################################################
 
+Clear-Host
+
 function IsPowerShell7() 
 {
     if (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShellCore') 
@@ -17,7 +19,7 @@ function IsPowerShell7()
     } 
     else
     { 
-        Write-Host 'No PowerShell 7+ is found on your system.'
+        Write-Host '[ NO ] No PowerShell 7+ is found on your system.'
         return $false 
     }
 }
@@ -60,7 +62,7 @@ function IsAzureRmModulesFound()
 
 function Install-AzModules()
 {
-    Write-Host 'Installing Az Modules on your OS now. It may take a while...'
+    Write-Host '[INFO] Installing Az Modules on your OS now. It may take a while...'
     if (IsWindows)
     {
         if (IsPowerShell7) 
@@ -81,7 +83,7 @@ function Install-AzModules()
 
 function Install-PowerShell7()
 {
-    Write-Host 'Installing the latest PowerShell on your system.'
+    Write-Host '[INFO] Installing the latest PowerShell on your system now...'
     try 
     {
         if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
@@ -95,18 +97,18 @@ function Install-PowerShell7()
     } 
     catch
     {
-        Write-Host 'An error occurred during pulling the data from the remote server.  Please try again later...'
+        Write-Host '[ NO] An error occurred during pulling the data from the remote server.  Please try again later...'
     }
 }
 
 function Uninstall-AzureRmModules() 
 {
-    Write-Host "Uninstalling AzureRm Modules (from PowerShell Core only). This will take a while..."
+    Write-Host "[INFO] Uninstalling AzureRm Modules now... This will take a while..."
     if (IsWindows)
     {
         if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
         {
-            Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRm Modules are removed from your system.'
+            Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRm Modules are removed from your system.'
         }
         else
         {
@@ -115,7 +117,7 @@ function Uninstall-AzureRmModules()
     }
     else
     {
-        Uninstall-AzureRm -PassThru; Write-Host 'The legacy AzureRM Modules are removed from your system.'
+        Uninstall-AzureRm -PassThru; Write-Host '[INFO] The legacy AzureRM Modules are removed from your system.'
     }
 }
 
@@ -133,8 +135,6 @@ function Set-PSEnvironment()
         if (IsAzureRmModulesFound)   { Uninstall-AzureRmModules }
     }
 }
-
-Clear-Host
 
 Set-PSEnvironment
 
@@ -160,9 +160,9 @@ function Get-PSEnvironment()
 if (Get-PSEnvironment) 
 {
     Write-Host ''
-    Write-Host 'Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
+    Write-Host '[INFO] Your setting meets the Prerequisites.  Please proceed with running the Get-AzQuotaUtil.ps1 script as described in Usage section in README.'
 }
 else
 {
-    Write-Host 'Your seetings do not seem to meet the Rerequisites!'
+    Write-Host '[INFO] Your seetings do not seem to meet the Rerequisites.  Please make sure that you go through Pre-Requisite Second of the REAMDE !!'
 }
