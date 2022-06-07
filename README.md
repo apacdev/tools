@@ -23,7 +23,7 @@ Please follow the instructions below to install Homebrew, PowerShell, and other 
 
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/ms-apac-csu/tools/main/pre-requisites.sh)"
 
-    NOTE: you will need sudo access to install packages.
+NOTE: you will need sudo access to install packages.
 
 ## USAGE
 
